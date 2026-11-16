@@ -4,7 +4,7 @@ Illustrated retellings of the Ramayana and Mahabharata for all ages, published t
 
 - `episodes/NNN/` holds each episode: numbered card images and `episode.json` (title, captions, takeaway).
 - `tools/publish.py` posts the next unpublished episode to Blogger and records it in `published.json`.
-- `.github/workflows/publish.yml` runs the publisher every Monday, Wednesday and Friday at about 8am Malaysia time. It skips quietly until the Blogger secrets are set.
+- `.github/workflows/publish.yml` runs the publisher every Monday, Wednesday and Friday at about 8am Malaysia time. It skips quietly until the three Google secrets are set. Blog: https://epictalesdaily.blogspot.com/
 - `tools/draw_ep001.py` is the script that drew Episode 1.
 
 All artwork and text are original.

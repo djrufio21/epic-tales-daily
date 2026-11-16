@@ -3,7 +3,8 @@
 Reads episodes/NNN/episode.json and the images beside it, posts them through
 the Blogger API v3, then records the episode in published.json.
 Needs these environment variables (GitHub secrets):
-  BLOGGER_BLOG_ID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN
+  GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN
+The blog is found from BLOG_URL below, so no blog ID is needed.
 """
 import html, json, os, pathlib, sys, urllib.parse, urllib.request
 
@@ -11,6 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 STATE = ROOT / "published.json"
 REPO = os.environ.get("GITHUB_REPOSITORY", "djrufio21/epic-tales-daily")
 BRANCH = os.environ.get("GITHUB_REF_NAME", "main")
+BLOG_URL = "https://epictalesdaily.blogspot.com/"
 RAW = f"https://raw.githubusercontent.com/{REPO}/{BRANCH}"
 
 
@@ -70,11 +72,15 @@ def main():
     }
     if os.environ.get("DRY_RUN"):
         print(post["title"]); print(post["content"]); return 0
-    blog = os.environ["BLOGGER_BLOG_ID"]
+    auth = {"Authorization": f"Bearer {access_token()}"}
+    blog = call(
+        "https://www.googleapis.com/blogger/v3/blogs/byurl?url=" + urllib.parse.quote(BLOG_URL, safe=""),
+        headers=auth,
+    )["id"]
     out = call(
         f"https://www.googleapis.com/blogger/v3/blogs/{blog}/posts/",
         json.dumps(post).encode(),
-        {"Authorization": f"Bearer {access_token()}", "Content-Type": "application/json"},
+        {**auth, "Content-Type": "application/json"},
     )
     print("Published:", out.get("url"))
     done.append(d.name)
