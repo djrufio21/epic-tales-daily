@@ -1,0 +1,34 @@
+name: Publish next episode
+on:
+  schedule:
+    # Monday, Wednesday, Friday at 08:07 Malaysia time (00:07 UTC)
+    - cron: "7 0 * * 1,3,5"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip until Blogger is connected
+        id: gate
+        env:
+          TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then echo "ready=no" >> "$GITHUB_OUTPUT"; echo "Blogger secrets not set yet. Skipping."; else echo "ready=yes" >> "$GITHUB_OUTPUT"; fi
+      - name: Publish
+        if: steps.gate.outputs.ready == 'yes'
+        env:
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: python tools/publish.py
+      - name: Record what was published
+        if: steps.gate.outputs.ready == 'yes'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add published.json
+          git diff --cached --quiet || (git commit -m "Record published episode" && git push)
