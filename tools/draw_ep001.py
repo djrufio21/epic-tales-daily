@@ -185,7 +185,7 @@ def lastcard(total):
     P.append(T(540,660,textwrap.wrap("Even a great king could not do everything alone. When something matters, ask for wise advice, do your part, and be patient.",30),48,"#fff","600","middle",1.35))
     P.append('<line x1="340" y1="1010" x2="740" y2="1010" stroke="#f1c40f" stroke-width="3"/>')
     P.append(T(540,1080,["Next episode"],26,"#f5cba7","600","middle")+T(540,1135,["The Four Princes Grow Up"],40,"#fff","700","middle"))
-    P.append(T(540,1235,[SERIES],26,"#f1c40f","800","middle")+T(540,1275,["A new story three times a week"],24,"#f5cba7","500","middle")+'</svg>')
+    P.append(T(540,1235,[SERIES],26,"#f1c40f","800","middle")+T(540,1275,["A new story every day"],24,"#f5cba7","500","middle")+'</svg>')
     return '\n'.join(P)
 
 EP=[(s1,"Long ago, on the banks of the river Sarayu, stood the golden city of Ayodhya."),
@@ -195,16 +195,22 @@ EP=[(s1,"Long ago, on the banks of the river Sarayu, stood the golden city of Ay
 (s5,"The fire blazed, and from it rose a shining messenger carrying a golden bowl of blessed sweet rice."),
 (s6,"The king shared the gift among his three queens: Kausalya, Kaikeyi and Sumitra."),
 (s7,"In time, four princes were born. All of Ayodhya rejoiced!")]
+def blogcard(scene):
+    """Picture only, for the blog. The caption is real text under the image."""
+    return '\n'.join([f'<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="940" viewBox="0 0 1080 940">',DEFS,
+        '<rect width="1080" height="940" fill="#fdf6e3"/>',
+        f'<clipPath id="clip"><rect x="40" y="40" width="1000" height="860" rx="24"/></clipPath><g clip-path="url(#clip)"><g transform="translate(40,40)">{scene}</g></g>',
+        f'<rect x="40" y="40" width="1000" height="860" rx="24" fill="none" stroke="{INK}" stroke-width="6"/></svg>'])
+
+import pathlib
+OUT=pathlib.Path(__file__).resolve().parent.parent/'episodes'/'001'
+(OUT/'social').mkdir(parents=True,exist_ok=True)
 total=len(EP)+1
+def render(svg,path):
+    tmp=path.with_suffix('.svg'); tmp.write_text(svg)
+    subprocess.run(['rsvg-convert',str(tmp),'-o',str(path)],check=True); tmp.unlink()
 for i,(fn,cap) in enumerate(EP,1):
-    open(f'ep1/ep1_{i:02d}.svg','w').write(card(i,total,fn(),cap))
-open(f'ep1/ep1_{total:02d}.svg','w').write(lastcard(total))
-for i in range(1,total+1):
-    subprocess.run(['rsvg-convert',f'ep1/ep1_{i:02d}.svg','-o',f'ep1/ep1_{i:02d}.png'],check=True)
-try:
-    from PIL import Image
-    ims=[Image.open(f'ep1/ep1_{i:02d}.png').convert('RGB') for i in range(1,total+1)]
-    sh=Image.new('RGB',(4*540+50,2*675+30),'#ffffff')
-    for k,im in enumerate(ims): sh.paste(im.resize((540,675)),(10+(k%4)*550,10+(k//4)*685))
-    sh.save('ep1/preview.png'); print('sheet ok')
-except Exception as e: print('no sheet',e)
+    scene=fn()
+    render(blogcard(scene),OUT/f'{i:02d}.png')                 # blog: picture only
+    render(card(i,total,scene,cap),OUT/'social'/f'{i:02d}.png')  # social: picture with caption
+render(lastcard(total),OUT/'social'/f'{total:02d}.png')

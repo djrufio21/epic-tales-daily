@@ -1,6 +1,7 @@
 """Publish the next unpublished episode to Blogger.
 
-Reads episodes/NNN/episode.json and the images beside it, posts them through
+Reads episodes/NNN/episode.json and the picture-only images beside it
+(captioned copies for social media live in episodes/NNN/social), posts them through
 the Blogger API v3, then records the episode in published.json.
 Needs these environment variables (GitHub secrets):
   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN
@@ -16,8 +17,8 @@ BLOG_URL = "https://epictalesdaily.blogspot.com/"
 RAW = f"https://raw.githubusercontent.com/{REPO}/{BRANCH}"
 
 
-def call(url, data=None, headers=None):
-    req = urllib.request.Request(url, data=data, headers=headers or {})
+def call(url, data=None, headers=None, method=None):
+    req = urllib.request.Request(url, data=data, headers=headers or {}, method=method)
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.load(r)
 
@@ -43,7 +44,7 @@ def build_html(d, ep):
     imgs = sorted(p.name for p in d.glob("*.png"))
     parts = []
     for i, name in enumerate(imgs):
-        cap = ep["captions"][i] if i < len(ep["captions"]) else ep["takeaway"]
+        cap = ep["captions"][i] if i < len(ep["captions"]) else ep["title"]
         src = f"{RAW}/episodes/{d.name}/{name}"
         parts.append(
             f'<p style="text-align:center"><img src="{src}" alt="{html.escape(cap)}" '
@@ -57,31 +58,35 @@ def build_html(d, ep):
     return "\n".join(parts)
 
 
+def title_of(ep):
+    return f"{ep['book']} Episode {ep['number']}: {ep['title']}"
+
+
 def main():
     done = json.loads(STATE.read_text()) if STATE.exists() else []
-    d = next_episode(done)
+    update = os.environ.get("UPDATE_EPISODE", "").strip()
+    d = (ROOT / "episodes" / update) if update else next_episode(done)
     if d is None:
         print("No unpublished episodes left. Nothing to do.")
         return 0
     ep = json.loads((d / "episode.json").read_text())
-    post = {
-        "kind": "blogger#post",
-        "title": f"{ep['book']} Episode {ep['number']}: {ep['title']}",
-        "content": build_html(d, ep),
-        "labels": [ep["book"]],
-    }
+    post = {"kind": "blogger#post", "title": title_of(ep), "content": build_html(d, ep), "labels": [ep["book"]]}
     if os.environ.get("DRY_RUN"):
         print(post["title"]); print(post["content"]); return 0
     auth = {"Authorization": f"Bearer {access_token()}"}
-    blog = call(
-        "https://www.googleapis.com/blogger/v3/blogs/byurl?url=" + urllib.parse.quote(BLOG_URL, safe=""),
-        headers=auth,
-    )["id"]
-    out = call(
-        f"https://www.googleapis.com/blogger/v3/blogs/{blog}/posts/",
-        json.dumps(post).encode(),
-        {**auth, "Content-Type": "application/json"},
-    )
+    api = "https://www.googleapis.com/blogger/v3/blogs"
+    blog = call(f"{api}/byurl?url=" + urllib.parse.quote(BLOG_URL, safe=""), headers=auth)["id"]
+    jhead = {**auth, "Content-Type": "application/json"}
+    if update:
+        # Refresh the content of an episode that is already live.
+        items = call(f"{api}/{blog}/posts?maxResults=100&fetchBodies=false", headers=auth).get("items", [])
+        match = [it for it in items if it["title"] == post["title"]]
+        if not match:
+            print("No live post found with title:", post["title"]); return 1
+        out = call(f"{api}/{blog}/posts/{match[0]['id']}", json.dumps({"content": post["content"]}).encode(), jhead, "PATCH")
+        print("Updated:", out.get("url"))
+        return 0
+    out = call(f"{api}/{blog}/posts/", json.dumps(post).encode(), jhead)
     print("Published:", out.get("url"))
     done.append(d.name)
     STATE.write_text(json.dumps(done, indent=2) + "\n")
