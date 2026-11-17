@@ -1,10 +1,12 @@
 # Epic Tales Daily
 
-Illustrated retellings of the Ramayana and Mahabharata for all ages, published daily.
+Illustrated retellings of the Ramayana and Mahabharata for children and families, published daily at https://epictalesdaily.blogspot.com/.
 
-- `episodes/NNN/` holds each episode: picture-only images for the blog, captioned copies for social media in `social/`, and `episode.json` (title, captions, takeaway).
+- `CLAUDE.md` is the template every episode follows.
+- `PLAN.md` is the story order.
+- `episodes/NNN/` holds each episode: `episode.json` (words), `scenes.py` (pictures), picture-only images for the blog and captioned cards in `social/`.
+- `tools/epic.py` is the drawing kit. `tools/build.py NNN` renders an episode.
 - `tools/publish.py` posts the next unpublished episode to Blogger and records it in `published.json`.
-- `.github/workflows/publish.yml` runs the publisher every day at about 8am Malaysia time. It skips quietly until the three Google secrets are set. Blog: https://epictalesdaily.blogspot.com/
-- `tools/draw_ep001.py` is the script that drew Episode 1.
+- `.github/workflows/publish.yml` runs the publisher every day at about 8am Malaysia time.
 
 All artwork and text are original.

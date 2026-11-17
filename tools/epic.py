@@ -1,7 +1,11 @@
-import textwrap, subprocess, random, math
+"""Epic Tales Daily drawing kit: characters, props, backdrops and card layouts.
+
+Every episode is drawn with this kit so the look never changes. See CLAUDE.md.
+"""
+import textwrap, subprocess, random, math, json, sys, importlib.util, pathlib
 W,H=1080,1350
 FONT="Inter, DejaVu Sans, sans-serif"
-SERIES="EPIC TALES DAILY"; BOOK="Ramayana, Episode 1"; TITLE="The King Who Longed for a Child"
+SERIES="EPIC TALES DAILY"
 INK="#3b2414"
 
 def T(x,y,lines,size=20,fill=INK,weight="400",anchor="start",lh=1.3):
@@ -80,20 +84,41 @@ DEFS='''<defs>
 <linearGradient id="river" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5dade2"/><stop offset="1" stop-color="#2e86c1"/></linearGradient>
 <linearGradient id="band" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7b241c"/><stop offset="1" stop-color="#943126"/></linearGradient>
 <radialGradient id="glow"><stop offset="0" stop-color="#fff6c9" stop-opacity="0.95"/><stop offset="1" stop-color="#fff6c9" stop-opacity="0"/></radialGradient>
+<linearGradient id="forest" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#173d24"/><stop offset="1" stop-color="#2e7d32"/></linearGradient>
+<linearGradient id="day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9d8f2"/><stop offset="1" stop-color="#e3f4fb"/></linearGradient>
 </defs>'''
 
-def s1():
-    g='<rect width="1000" height="860" fill="url(#sunrise)"/><circle cx="770" cy="300" r="180" fill="url(#glow)"/><circle cx="770" cy="300" r="105" fill="#fff6c9"/>'
-    g+='<path d="M0,560 Q220,470 440,545 T1000,520 L1000,700 L0,700 Z" fill="#d9b86c"/>'
-    for bx,by in ((140,200),(240,150),(560,170)): g+=f'<path d="M{bx},{by} q14,-14 28,0 q14,-14 28,0" stroke="{INK}" stroke-width="4" fill="none" stroke-linecap="round"/>'
-    g+=palace(178,135,1.15)+'<rect y="640" width="1000" height="60" fill="#7fb069"/>'
-    g+=tree(90,560,60)+tree(915,555,66)
-    g+='<rect y="700" width="1000" height="160" fill="url(#river)"/>'
-    for wx,wy in ((80,740),(420,725),(820,750),(300,820),(600,840),(900,815)): g+=f'<path d="M{wx},{wy} q20,-10 40,0 q20,10 40,0" stroke="#fff" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="round"/>'
-    for bx,by,c in ((230,775,"#c0392b"),(700,800,"#fffaf0")):
-        g+=f'<g transform="translate({bx},{by})"><line x1="0" y1="0" x2="0" y2="-80" stroke="{INK}" stroke-width="4"/><polygon points="4,-78 4,-14 52,-14" fill="{c}"/><path d="M-60,0 L60,0 L44,26 L-44,26 Z" fill="#7a4a1c"/></g>'
-    return g
-def s2():
+
+# ---- Fixed character designs. Never change these between episodes. ----
+RAMA=dict(robe="#f1c40f",skin="#7fb3d5",trim="#c0392b",tiara=True)
+LAKSHMANA=dict(robe="#c0392b",skin="#d49a5b",tiara=True)
+BHARATA=dict(robe="#27ae60",skin="#c68642",tiara=True)
+SHATRUGHNA=dict(robe="#8e44ad",skin="#c68642",tiara=True)
+VISHVAMITRA=dict(robe="#a04000",hair="#5d4037",beard="#8d6e63",beardlen=60,topknot=True,trim="#6e2c00")
+
+# ---- Props ----
+def label(x,y,text,size=24,fill=INK):
+    """A name tag on a cream pill, so it stays readable over any background."""
+    w=len(text)*size*0.62+36
+    return f'<rect x="{x-w/2:.0f}" y="{y-size-6}" width="{w:.0f}" height="{size+20}" rx="{(size+20)/2:.0f}" fill="#fffaf0" stroke="{INK}" stroke-width="2"/>'+T(x,y,[text],size,fill,"700","middle")
+def staff(x,y,h=260): return f'<line x1="{x}" y1="{y}" x2="{x}" y2="{y-h}" stroke="#6e2c00" stroke-width="9" stroke-linecap="round"/>'
+def bow(x,y,s=1,flip=False):
+    return f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})"><path d="M0,-60 Q46,0 0,60" stroke="#7a4a1c" stroke-width="7" fill="none" stroke-linecap="round"/><line x1="0" y1="-60" x2="0" y2="60" stroke="#fffaf0" stroke-width="2.5"/></g>'
+def arrow(x1,y1,x2,y2):
+    a=math.atan2(y2-y1,x2-x1); hx,hy=x2-22*math.cos(a),y2-22*math.sin(a); px,py=-math.sin(a)*9,math.cos(a)*9
+    return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#5d4037" stroke-width="5" stroke-linecap="round"/><polygon points="{x2:.0f},{y2:.0f} {hx+px:.0f},{hy+py:.0f} {hx-px:.0f},{hy-py:.0f}" fill="#5d4037"/>'
+def target(x,y,s=1):
+    return f'<g transform="translate({x},{y}) scale({s})"><line x1="-30" y1="60" x2="-50" y2="170" stroke="#7a4a1c" stroke-width="8"/><line x1="30" y1="60" x2="50" y2="170" stroke="#7a4a1c" stroke-width="8"/><circle r="80" fill="#fffaf0" stroke="{INK}" stroke-width="4"/><circle r="56" fill="#c0392b"/><circle r="32" fill="#fffaf0"/><circle r="12" fill="#c0392b"/></g>'
+def book(x,y,s=1):
+    return f'<g transform="translate({x},{y}) scale({s})"><rect x="-22" y="-8" width="44" height="18" rx="3" fill="#f5e6c4" stroke="#7a4a1c" stroke-width="2"/><line x1="-14" y1="-1" x2="14" y2="-1" stroke="#7a4a1c" stroke-width="1.5"/><line x1="-14" y1="4" x2="14" y2="4" stroke="#7a4a1c" stroke-width="1.5"/></g>'
+def fire(x,y,s=1):
+    return f'<g transform="translate({x},{y}) scale({s}) translate(-500,-650)"><path d="M500,650 Q360,560 440,460 Q470,520 500,395 Q560,500 575,465 Q660,575 500,650 Z" fill="#e67e22"/><path d="M500,650 Q420,585 478,520 Q500,560 512,480 Q580,575 500,650 Z" fill="#f9e79f"/><rect x="400" y="640" width="200" height="70" fill="#8d5524"/><rect x="370" y="710" width="260" height="30" fill="#7a4a1c"/></g>'
+def demon(x,y,s=1):
+    """A shadowy rakshasa. Keep demons as dark silhouettes: scary shapes, no gore."""
+    return f'<g transform="translate({x},{y}) scale({s})" opacity="0.92"><polygon points="-30,-38 -46,-84 -12,-50" fill="#1a1a2e"/><polygon points="30,-38 46,-84 12,-50" fill="#1a1a2e"/><path d="M-56,70 Q-70,-20 0,-56 Q70,-20 56,70 Z" fill="#1a1a2e"/><circle cx="-18" cy="-12" r="8" fill="#e74c3c"/><circle cx="18" cy="-12" r="8" fill="#e74c3c"/><path d="M-20,20 L-10,10 L0,20 L10,10 L20,20" stroke="#e74c3c" stroke-width="4" fill="none"/></g>'
+
+# ---- Backdrops (scene coordinates are 1000 wide by 860 tall) ----
+def bg_court():
     g='<rect width="1000" height="860" fill="#f6d9a8"/>'
     for cx in (200,500,800): g+=f'<path d="M{cx-110},640 L{cx-110},300 Q{cx},140 {cx+110},300 L{cx+110},640 Z" fill="#edc88e"/>'
     for px in (45,335,635,925): g+=f'<rect x="{px}" y="90" width="30" height="550" fill="#e2b97a"/><rect x="{px-8}" y="90" width="46" height="18" fill="#c9812a"/>'
@@ -102,118 +127,89 @@ def s2():
         for j in range(1,6):
             t=j/6; g+=f'<circle cx="{x0+200*t:.0f}" cy="{40+140*t*(1-t):.0f}" r="10" fill="{"#e67e22" if j%2 else "#f1c40f"}"/>'
     g+='<rect y="640" width="1000" height="220" fill="#a0522d"/><polygon points="380,640 620,640 730,860 270,860" fill="#8e2f2f"/><polygon points="380,640 392,640 290,860 270,860" fill="#f1c40f"/><polygon points="608,640 620,640 730,860 710,860" fill="#f1c40f"/>'
-    g+='<rect x="370" y="600" width="260" height="42" rx="6" fill="#c9812a"/>'
-    g+=person(500,400,1.9,arms="up2",**KING)
-    g+=person(190,500,1.6,robe="#27ae60",arms="hold")+basket(190,500+52*1.6,1.6)
-    g+=person(810,500,1.6,robe="#d35400",female=True,drape="#f5b041",arms="hold")+basket(810,500+52*1.6,1.6)
-    g+=person(300,545,1.5,robe="#8e44ad",female=True,drape="#c39bd3",arms="up2")
-    g+=person(700,545,1.5,robe="#16a085",arms="up2",beard="#2b1b12",beardlen=10)
     return g
-def s3():
-    R=random.Random(7)
-    g='<rect width="1000" height="860" fill="url(#night)"/>'
-    for _ in range(40): g+=f'<circle cx="{R.randint(10,990)}" cy="{R.randint(10,430)}" r="{R.choice((2,2,3,4))}" fill="#fff" opacity="{R.choice((0.6,0.8,1))}"/>'
-    g+='<circle cx="790" cy="170" r="150" fill="url(#glow)" opacity="0.5"/><circle cx="790" cy="170" r="72" fill="#fdf3c4"/><circle cx="765" cy="150" r="12" fill="#f0e2a0"/><circle cx="812" cy="195" r="9" fill="#f0e2a0"/>'
-    g+=palace(560,235,0.75,"#1b2a52","#18254a","#152043","#0f1b3d",flags=False)
-    g+='<rect y="620" width="1000" height="240" fill="#b8ad9e"/><rect y="470" width="1000" height="24" fill="#d8cfc2"/><rect y="596" width="1000" height="24" fill="#d8cfc2"/>'
-    for bx in range(20,1000,64): g+=f'<rect x="{bx}" y="494" width="20" height="102" rx="8" fill="#cfc6b8"/>'
-    g+='<ellipse cx="690" cy="835" rx="170" ry="18" fill="#000" opacity="0.15"/><ellipse cx="300" cy="725" rx="110" ry="14" fill="#000" opacity="0.15"/>'
-    g+=person(300,470,2.1,mood="sad",**KING)+cradle(690,640,2.4)
-    return g
-def s4():
+def bg_garden(pond=True):
     g='<rect width="1000" height="860" fill="#cdeaf7"/><circle cx="150" cy="130" r="60" fill="#fff6c9"/>'
     for cx,cy in ((420,120),(480,110),(540,125),(800,180),(850,170)): g+=f'<circle cx="{cx}" cy="{cy}" r="36" fill="#fff" opacity="0.9"/>'
     g+='<path d="M0,520 Q250,460 500,510 T1000,500 L1000,860 L0,860 Z" fill="#9ccc65"/>'
     g+=tree(80,330,90)+tree(900,320,100,"#5b9a45")+tree(500,360,70,"#7cb866")
     for fx,fy,c in ((60,640,"#e74c3c"),(120,690,"#f1c40f"),(900,650,"#e84393"),(950,700,"#f39c12"),(840,720,"#e74c3c"),(160,750,"#e84393")):
         g+=f'<circle cx="{fx}" cy="{fy}" r="26" fill="#5b9a45"/><circle cx="{fx-8}" cy="{fy-6}" r="7" fill="{c}"/><circle cx="{fx+9}" cy="{fy+4}" r="7" fill="{c}"/>'
-    g+='<ellipse cx="500" cy="790" rx="230" ry="48" fill="#5dade2"/>'
-    for lx,ly in ((430,780),(570,798)): g+=f'<ellipse cx="{lx}" cy="{ly+6}" rx="26" ry="8" fill="#27ae60"/><ellipse cx="{lx-9}" cy="{ly-4}" rx="7" ry="13" fill="#f5a9c8" transform="rotate(-25 {lx-9} {ly-4})"/><ellipse cx="{lx+9}" cy="{ly-4}" rx="7" ry="13" fill="#f5a9c8" transform="rotate(25 {lx+9} {ly-4})"/><ellipse cx="{lx}" cy="{ly-7}" rx="7" ry="14" fill="#f8c8dc"/>'
-    g+=person(300,440,2.0,**KING)+person(690,440,2.0,arms="raise",flip=True,**SAGE)
+    if pond: g+='<ellipse cx="500" cy="790" rx="230" ry="48" fill="#5dade2"/>'
     return g
-def s5():
-    g='<rect width="1000" height="860" fill="url(#dusk)"/><rect y="380" width="1000" height="240" fill="#7a4a3a"/>'
-    for cx in (120,330,670,880): g+=f'<path d="M{cx-70},620 L{cx-70},480 Q{cx},400 {cx+70},480 L{cx+70},620 Z" fill="#5e372b"/>'
-    g+='<rect y="620" width="1000" height="240" fill="#c9b78e"/><circle cx="500" cy="300" r="330" fill="url(#glow)"/>'
-    for k in range(16):
-        a=math.pi*2*k/16; g+=f'<line x1="{500+175*math.cos(a):.0f}" y1="{240+175*math.sin(a):.0f}" x2="{500+250*math.cos(a):.0f}" y2="{240+250*math.sin(a):.0f}" stroke="#fff6c9" stroke-width="7" stroke-linecap="round" opacity="0.75"/>'
-    g+=person(500,250,1.5,robe="#f4d03f",skin="#fbe6a2",hair="#d4ac0d",trim="#fffaf0",arms="hold")+bowl(500,250+50*1.5,1.5)
-    g+='<path d="M500,650 Q360,560 440,460 Q470,520 500,395 Q560,500 575,465 Q660,575 500,650 Z" fill="#e67e22"/><path d="M500,650 Q420,585 478,520 Q500,560 512,480 Q580,575 500,650 Z" fill="#f9e79f"/>'
-    g+='<rect x="400" y="640" width="200" height="70" fill="#8d5524"/><rect x="370" y="710" width="260" height="30" fill="#7a4a1c"/>'
-    for bx in (450,500,550): g+=f'<line x1="{bx}" y1="640" x2="{bx}" y2="710" stroke="#7a4a1c" stroke-width="3"/>'
-    g+=person(190,500,1.7,arms="up2",**KING)
-    g+=person(905,515,1.4,robe="#e67e22",trim="#b9770e",topknot=True,arms="up2")+person(790,555,1.5,arms="raise",flip=True,**SAGE)
-    return g
-def s6():
+def bg_room():
     g='<rect width="1000" height="860" fill="#f6d9a8"/>'
     for px in (40,930): g+=f'<rect x="{px}" y="0" width="30" height="660" fill="#e2b97a"/>'
     g+='<path d="M380,660 L380,260 Q500,110 620,260 L620,660 Z" fill="#cdeaf7"/><path d="M380,660 L380,260 Q500,110 620,260 L620,660" stroke="#c9812a" stroke-width="14" fill="none"/><circle cx="560" cy="300" r="34" fill="#fff6c9"/>'
     g+='<path d="M0,0 L330,0 Q250,90 120,110 Q60,200 0,230 Z" fill="#8e2f2f"/><path d="M1000,0 L670,0 Q750,90 880,110 Q940,200 1000,230 Z" fill="#8e2f2f"/>'
-    g+='<rect y="660" width="1000" height="200" fill="#a0522d"/><ellipse cx="500" cy="760" rx="440" ry="70" fill="#8e2f2f"/><ellipse cx="500" cy="760" rx="440" ry="70" fill="none" stroke="#f1c40f" stroke-width="5"/>'
-    g+=person(200,440,2.0,arms="hold",**KING)+bowl(200,440+50*2,2.0)
-    for sx,sy in ((120,470),(290,500),(150,600),(275,585)): g+=spark(sx,sy,13)
-    for qx,q in ((480,Q1),(670,Q2),(860,Q3)): g+=person(qx,460,1.85,**q)
-    for lx,n in ((200,"King Dasharatha"),(480,"Kausalya"),(670,"Kaikeyi"),(860,"Sumitra")): g+=T(lx,770,[n],24,"#fffaf0","700","middle")
+    g+='<rect y="660" width="1000" height="200" fill="#a0522d"/><ellipse cx="500" cy="770" rx="440" ry="64" fill="#8e2f2f"/><ellipse cx="500" cy="770" rx="440" ry="64" fill="none" stroke="#f1c40f" stroke-width="5"/>'
     return g
-def s7():
-    R=random.Random(3); cols=["#c0392b","#f1c40f","#1f618d","#27ae60","#e67e22"]
-    g='<rect width="1000" height="860" fill="#fdebd0"/>'
-    for cx in (200,500,800): g+=f'<path d="M{cx-120},500 L{cx-120},260 Q{cx},120 {cx+120},260 L{cx+120},500 Z" fill="#fbdcb4"/>'
-    g+=bunting(20,45)
-    for _ in range(40): g+=f'<circle cx="{R.randint(20,980)}" cy="{R.randint(110,480)}" r="7" fill="{R.choice(cols)}"/>'
-    g+='<rect y="500" width="1000" height="360" fill="#e8c9a0"/>'
-    g+=person(200,330,1.55,arms="up2",**Q1)+person(400,330,1.55,arms="up2",**KING)+person(600,330,1.55,arms="up2",**Q2)+person(800,330,1.55,arms="up2",**Q3)
-    for cx,n,sk,bl in ((140,"Rama","#7fb3d5","#f1c40f"),(380,"Bharata","#c68642","#27ae60"),(620,"Lakshmana","#d49a5b","#c0392b"),(860,"Shatrughna","#c68642","#8e44ad")):
-        g+=cradle(cx,640,1.7,sk,bl)+T(cx,828,[n],28,INK,"700","middle")
+def bg_forest():
+    g='<rect width="1000" height="860" fill="url(#forest)"/><circle cx="500" cy="330" r="300" fill="url(#glow)" opacity="0.35"/>'
+    for tx,tw in ((60,46),(210,34),(360,28),(650,30),(800,40),(940,50)): g+=f'<rect x="{tx-tw/2}" y="0" width="{tw}" height="680" fill="#3e2a1a"/>'
+    for cx,cy,r in ((40,60,130),(220,30,120),(400,10,110),(620,20,120),(810,40,130),(980,70,120)): g+=f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="#14351f"/>'
+    g+='<path d="M0,650 Q250,610 500,645 T1000,640 L1000,860 L0,860 Z" fill="#3f6b35"/>'
+    for bx in (90,300,720,900): g+=f'<circle cx="{bx}" cy="670" r="42" fill="#2f5a2a"/>'
+    return g
+def bg_road():
+    g='<rect width="1000" height="860" fill="url(#sunrise)"/><circle cx="500" cy="330" r="190" fill="url(#glow)"/><circle cx="500" cy="330" r="100" fill="#fff6c9"/>'
+    g+='<path d="M0,470 Q180,360 380,450 Q520,380 700,440 Q860,370 1000,460 L1000,860 L0,860 Z" fill="#c9a85f"/>'
+    g+=palace(-40,240,0.62)
+    g+='<path d="M0,560 Q250,520 500,550 T1000,540 L1000,860 L0,860 Z" fill="#8cc084"/><polygon points="470,548 530,548 760,860 240,860" fill="#e6cf9c"/>'
+    g+=tree(880,470,70)+tree(760,500,46,"#5b9a45")
     return g
 
-def card(n,total,scene,caption):
-    P=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',DEFS,f'<rect width="{W}" height="{H}" fill="#fdf6e3"/>',f'<rect width="{W}" height="100" fill="url(#band)"/>']
-    P.append(T(40,40,[SERIES],20,"#f1c40f","700")+T(40,80,[TITLE],32,"#fff","700")+T(1040,40,[BOOK],20,"#f5cba7","600","end"))
-    P.append(f'<clipPath id="clip"><rect x="40" y="125" width="1000" height="860" rx="24"/></clipPath><g clip-path="url(#clip)"><g transform="translate(40,125)">{scene}</g></g><rect x="40" y="125" width="1000" height="860" rx="24" fill="none" stroke="{INK}" stroke-width="6"/>')
-    P.append('<rect x="40" y="1010" width="1000" height="260" rx="20" fill="#fffaf0" stroke="#d4ac0d" stroke-width="4"/>')
-    lines=textwrap.wrap(caption,46); size=36; lh=1.32
-    y0=1140-(len(lines)-1)*size*lh/2+size*0.35
-    P.append(T(540,round(y0),lines,size,INK,"500","middle",lh))
-    dots=''.join(f'<circle cx="{540+(i-(total-1)/2)*26}" cy="1312" r="{8 if i==n-1 else 5}" fill="{"#7b241c" if i==n-1 else "#d5c4a1"}"/>' for i in range(total))
-    P.append(dots+'</svg>')
-    return '\n'.join(P)
-def lastcard(total):
-    P=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',DEFS,f'<rect width="{W}" height="{H}" fill="#7b241c"/><rect x="30" y="30" width="1020" height="1290" rx="30" fill="none" stroke="#f1c40f" stroke-width="5"/>']
-    P.append('<g transform="translate(0,-70)"><circle cx="540" cy="300" r="230" fill="url(#glow)" opacity="0.6"/><path d="M540,190 Q485,280 540,335 Q595,280 540,190 Z" fill="#f39c12"/><path d="M540,245 Q515,295 540,325 Q565,295 540,245 Z" fill="#f9e79f"/><path d="M420,335 Q540,470 660,335 Z" fill="#c9812a"/><path d="M420,335 Q540,372 660,335 Q540,318 420,335 Z" fill="#e8a33d"/><path d="M650,338 L700,322 L690,350 Z" fill="#c9812a"/></g>')
-    P.append(T(540,470,["TODAY'S VALUE"],30,"#f1c40f","800","middle"))
-    P.append(T(540,560,["Shraddha"],84,"#fff","800","middle"))
-    P.append(T(540,612,["faith with a true heart"],32,"#f5cba7","500","middle"))
-    P.append(T(540,700,textwrap.wrap("King Dasharatha did not give up. He listened to his guru and prayed with a true heart. When we pray with shraddha, do our part and wait patiently, blessings come at the right time.",40),36,"#fff","500","middle",1.38))
-    P.append('<line x1="340" y1="1000" x2="740" y2="1000" stroke="#f1c40f" stroke-width="3"/>')
-    P.append(T(540,1050,["TALK ABOUT IT"],24,"#f1c40f","800","middle"))
-    P.append(T(540,1098,textwrap.wrap("Who is a guru in your life, like a parent, a grandparent or a teacher? What good advice have they given you?",50),28,"#fff","500","middle",1.35))
-    P.append(T(540,1262,[SERIES],24,"#f1c40f","800","middle")+T(540,1294,["A new story every day"],22,"#f5cba7","500","middle")+'</svg>')
-    return '\n'.join(P)
-
-EP=[(s1,"Long ago, on the banks of the river Sarayu, stood the golden city of Ayodhya."),
-(s2,"Its king, Dasharatha, was brave and fair. His people loved him, and the kingdom had everything it needed."),
-(s3,"But the king carried one sorrow. He had no child, and no heir to care for Ayodhya after him."),
-(s4,"His teacher, the sage Vasishtha, told him: “Do not lose hope. Hold a sacred fire ceremony and pray with a true heart.”"),
-(s5,"The fire blazed, and from it rose a shining messenger carrying a golden bowl of blessed sweet rice."),
-(s6,"The king shared the gift among his three queens: Kausalya, Kaikeyi and Sumitra."),
-(s7,"In time, four princes were born. All of Ayodhya rejoiced!")]
+# ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
     return '\n'.join([f'<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="940" viewBox="0 0 1080 940">',DEFS,
         '<rect width="1080" height="940" fill="#fdf6e3"/>',
         f'<clipPath id="clip"><rect x="40" y="40" width="1000" height="860" rx="24"/></clipPath><g clip-path="url(#clip)"><g transform="translate(40,40)">{scene}</g></g>',
         f'<rect x="40" y="40" width="1000" height="860" rx="24" fill="none" stroke="{INK}" stroke-width="6"/></svg>'])
+def socialcard(n,total,scene,caption,ep):
+    """Picture with caption, for Instagram, Facebook and WhatsApp."""
+    P=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',DEFS,f'<rect width="{W}" height="{H}" fill="#fdf6e3"/>',f'<rect width="{W}" height="100" fill="url(#band)"/>']
+    P.append(T(40,40,[SERIES],20,"#f1c40f","700")+T(40,80,[ep["title"]],32,"#fff","700")+T(1040,40,[f'{ep["book"]}, Episode {ep["number"]}'],20,"#f5cba7","600","end"))
+    P.append(f'<clipPath id="clip"><rect x="40" y="125" width="1000" height="860" rx="24"/></clipPath><g clip-path="url(#clip)"><g transform="translate(40,125)">{scene}</g></g><rect x="40" y="125" width="1000" height="860" rx="24" fill="none" stroke="{INK}" stroke-width="6"/>')
+    P.append('<rect x="40" y="1010" width="1000" height="260" rx="20" fill="#fffaf0" stroke="#d4ac0d" stroke-width="4"/>')
+    lines=textwrap.wrap(caption,46); size=36 if len(lines)<=4 else 31; lh=1.32
+    if size==31: lines=textwrap.wrap(caption,54)
+    y0=1140-(len(lines)-1)*size*lh/2+size*0.35
+    P.append(T(540,round(y0),lines,size,INK,"500","middle",lh))
+    P.append(''.join(f'<circle cx="{540+(i-(total-1)/2)*26}" cy="1312" r="{8 if i==n-1 else 5}" fill="{"#7b241c" if i==n-1 else "#d5c4a1"}"/>' for i in range(total))+'</svg>')
+    return '\n'.join(P)
+def valuecard(ep):
+    """Closing card: today's value, a short lesson and a question to talk about."""
+    P=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',DEFS,f'<rect width="{W}" height="{H}" fill="#7b241c"/><rect x="30" y="30" width="1020" height="1290" rx="30" fill="none" stroke="#f1c40f" stroke-width="5"/>']
+    P.append('<g transform="translate(0,-70)"><circle cx="540" cy="300" r="230" fill="url(#glow)" opacity="0.6"/><path d="M540,190 Q485,280 540,335 Q595,280 540,190 Z" fill="#f39c12"/><path d="M540,245 Q515,295 540,325 Q565,295 540,245 Z" fill="#f9e79f"/><path d="M420,335 Q540,470 660,335 Z" fill="#c9812a"/><path d="M420,335 Q540,372 660,335 Q540,318 420,335 Z" fill="#e8a33d"/><path d="M650,338 L700,322 L690,350 Z" fill="#c9812a"/></g>')
+    P.append(T(540,470,["TODAY'S VALUE"],30,"#f1c40f","800","middle"))
+    P.append(T(540,560,[ep["value_name"]],84 if len(ep["value_name"])<=11 else 62,"#fff","800","middle"))
+    P.append(T(540,612,[ep["value_meaning"]],32,"#f5cba7","500","middle"))
+    P.append(T(540,700,textwrap.wrap(ep["card_lesson"],40),36,"#fff","500","middle",1.38))
+    P.append('<line x1="340" y1="1000" x2="740" y2="1000" stroke="#f1c40f" stroke-width="3"/>')
+    P.append(T(540,1050,["TALK ABOUT IT"],24,"#f1c40f","800","middle"))
+    P.append(T(540,1098,textwrap.wrap(ep["question"],50),28,"#fff","500","middle",1.35))
+    P.append(T(540,1262,[SERIES],24,"#f1c40f","800","middle")+T(540,1294,["A new story every day"],22,"#f5cba7","500","middle")+'</svg>')
+    return '\n'.join(P)
 
-import pathlib
-OUT=pathlib.Path(__file__).resolve().parent.parent/'episodes'/'001'
-(OUT/'social').mkdir(parents=True,exist_ok=True)
-total=len(EP)+1
-def render(svg,path):
+def _render(svg,path):
     tmp=path.with_suffix('.svg'); tmp.write_text(svg)
     subprocess.run(['rsvg-convert',str(tmp),'-o',str(path)],check=True); tmp.unlink()
-for i,(fn,cap) in enumerate(EP,1):
-    scene=fn()
-    render(blogcard(scene),OUT/f'{i:02d}.png')                 # blog: picture only
-    render(card(i,total,scene,cap),OUT/'social'/f'{i:02d}.png')  # social: picture with caption
-render(lastcard(total),OUT/'social'/f'{total:02d}.png')
+def build(epdir,preview=None):
+    """Render one episode folder: blog pictures, social cards and the value card."""
+    epdir=pathlib.Path(epdir); ep=json.loads((epdir/'episode.json').read_text())
+    spec=importlib.util.spec_from_file_location(f'scenes_{epdir.name}',epdir/'scenes.py'); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    assert len(mod.SCENES)==len(ep['captions'])==7, 'An episode has exactly 7 scenes and 7 captions'
+    for k in ('value_name','value_meaning','lesson','card_lesson','question','next'): assert ep.get(k), f'episode.json is missing {k}'
+    assert len(textwrap.wrap(ep['card_lesson'],40))<=6 and len(textwrap.wrap(ep['question'],50))<=4, 'card_lesson or question is too long for the value card'
+    (epdir/'social').mkdir(exist_ok=True); total=8
+    for i,(fn,cap) in enumerate(zip(mod.SCENES,ep['captions']),1):
+        assert len(textwrap.wrap(cap,54))<=5, f'caption {i} is too long'
+        scene=fn(); _render(blogcard(scene),epdir/f'{i:02d}.png'); _render(socialcard(i,total,scene,cap,ep),epdir/'social'/f'{i:02d}.png')
+    _render(valuecard(ep),epdir/'social'/'08.png')
+    if preview:
+        from PIL import Image
+        ims=[Image.open(epdir/'social'/f'{i:02d}.png').convert('RGB') for i in range(1,9)]
+        sh=Image.new('RGB',(4*540+50,2*675+30),'#ffffff')
+        for k,im in enumerate(ims): sh.paste(im.resize((540,675)),(10+(k%4)*550,10+(k//4)*685))
+        sh.save(preview)
