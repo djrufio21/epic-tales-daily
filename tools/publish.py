@@ -52,7 +52,12 @@ def build_html(d, ep):
         )
         if i < len(ep["captions"]):
             parts.append(f"<p>{html.escape(cap)}</p>")
-    parts.append(f"<h3>Today's takeaway</h3><p>{html.escape(ep['takeaway'])}</p>")
+    if ep.get("value_name"):
+        parts.append(f"<h3>Today's value: {html.escape(ep['value_name'])} ({html.escape(ep['value_meaning'])})</h3>")
+        parts.append(f"<p>{html.escape(ep['lesson'])}</p>")
+        parts.append(f"<p><strong>Talk about it:</strong> {html.escape(ep['question'])}</p>")
+    else:
+        parts.append(f"<h3>Today's takeaway</h3><p>{html.escape(ep['takeaway'])}</p>")
     if ep.get("next"):
         parts.append(f"<p><em>Next episode: {html.escape(ep['next'])}</em></p>")
     return "\n".join(parts)

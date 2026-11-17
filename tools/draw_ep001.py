@@ -180,12 +180,15 @@ def card(n,total,scene,caption):
     return '\n'.join(P)
 def lastcard(total):
     P=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',DEFS,f'<rect width="{W}" height="{H}" fill="#7b241c"/><rect x="30" y="30" width="1020" height="1290" rx="30" fill="none" stroke="#f1c40f" stroke-width="5"/>']
-    P.append('<circle cx="540" cy="300" r="230" fill="url(#glow)" opacity="0.6"/><path d="M540,190 Q485,280 540,335 Q595,280 540,190 Z" fill="#f39c12"/><path d="M540,245 Q515,295 540,325 Q565,295 540,245 Z" fill="#f9e79f"/><path d="M420,335 Q540,470 660,335 Z" fill="#c9812a"/><path d="M420,335 Q540,372 660,335 Q540,318 420,335 Z" fill="#e8a33d"/><path d="M650,338 L700,322 L690,350 Z" fill="#c9812a"/>')
-    P.append(T(540,560,["TODAY'S TAKEAWAY"],34,"#f1c40f","800","middle"))
-    P.append(T(540,660,textwrap.wrap("Even a great king could not do everything alone. When something matters, ask for wise advice, do your part, and be patient.",30),48,"#fff","600","middle",1.35))
-    P.append('<line x1="340" y1="1010" x2="740" y2="1010" stroke="#f1c40f" stroke-width="3"/>')
-    P.append(T(540,1080,["Next episode"],26,"#f5cba7","600","middle")+T(540,1135,["The Four Princes Grow Up"],40,"#fff","700","middle"))
-    P.append(T(540,1235,[SERIES],26,"#f1c40f","800","middle")+T(540,1275,["A new story every day"],24,"#f5cba7","500","middle")+'</svg>')
+    P.append('<g transform="translate(0,-70)"><circle cx="540" cy="300" r="230" fill="url(#glow)" opacity="0.6"/><path d="M540,190 Q485,280 540,335 Q595,280 540,190 Z" fill="#f39c12"/><path d="M540,245 Q515,295 540,325 Q565,295 540,245 Z" fill="#f9e79f"/><path d="M420,335 Q540,470 660,335 Z" fill="#c9812a"/><path d="M420,335 Q540,372 660,335 Q540,318 420,335 Z" fill="#e8a33d"/><path d="M650,338 L700,322 L690,350 Z" fill="#c9812a"/></g>')
+    P.append(T(540,470,["TODAY'S VALUE"],30,"#f1c40f","800","middle"))
+    P.append(T(540,560,["Shraddha"],84,"#fff","800","middle"))
+    P.append(T(540,612,["faith with a true heart"],32,"#f5cba7","500","middle"))
+    P.append(T(540,700,textwrap.wrap("King Dasharatha did not give up. He listened to his guru and prayed with a true heart. When we pray with shraddha, do our part and wait patiently, blessings come at the right time.",40),36,"#fff","500","middle",1.38))
+    P.append('<line x1="340" y1="1000" x2="740" y2="1000" stroke="#f1c40f" stroke-width="3"/>')
+    P.append(T(540,1050,["TALK ABOUT IT"],24,"#f1c40f","800","middle"))
+    P.append(T(540,1098,textwrap.wrap("Who is a guru in your life, like a parent, a grandparent or a teacher? What good advice have they given you?",50),28,"#fff","500","middle",1.35))
+    P.append(T(540,1262,[SERIES],24,"#f1c40f","800","middle")+T(540,1294,["A new story every day"],22,"#f5cba7","500","middle")+'</svg>')
     return '\n'.join(P)
 
 EP=[(s1,"Long ago, on the banks of the river Sarayu, stood the golden city of Ayodhya."),
