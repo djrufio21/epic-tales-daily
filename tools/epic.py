@@ -159,6 +159,34 @@ def bg_road():
     g+=tree(880,470,70)+tree(760,500,46,"#5b9a45")
     return g
 
+# ---- Added in Episode 4 ----
+def boat(x,y,s=1):
+    """A small wooden river boat. Draw it after the people sitting in it so the hull hides their legs."""
+    return f'<g transform="translate({x},{y}) scale({s})"><path d="M-230,0 L230,0 Q200,70 120,80 L-120,80 Q-200,70 -230,0 Z" fill="#8d5524"/><path d="M-230,0 L230,0 L222,16 L-222,16 Z" fill="#c9812a"/><line x1="-150" y1="40" x2="150" y2="40" stroke="#6e3b14" stroke-width="4"/></g>'
+def rock(x,y,r=30,c="#7f6a55"):
+    return f'<path d="M{x-r},{y+r*0.5} Q{x-r*1.1},{y-r*0.4} {x-r*0.3},{y-r*0.8} Q{x+r*0.6},{y-r*1.0} {x+r},{y-r*0.1} Q{x+r*1.05},{y+r*0.6} {x},{y+r*0.75} Z" fill="{c}" stroke="#4e3b2a" stroke-width="3"/>'
+def dust(x,y,r=60):
+    return f'<g opacity="0.55"><circle cx="{x}" cy="{y}" r="{r}" fill="#c9a87c"/><circle cx="{x+r*0.8}" cy="{y+r*0.2}" r="{r*0.7}" fill="#d8bc93"/><circle cx="{x-r*0.8}" cy="{y+r*0.3}" r="{r*0.65}" fill="#d8bc93"/></g>'
+def demon_falling(x,y,s=1,angle=35):
+    """A defeated demon toppling over. Still a plain silhouette, never wounded."""
+    return f'<g transform="rotate({angle},{x},{y+70*s})">{demon(x,y,s)}</g>'
+def soundwaves(x,y,s=1,flip=False):
+    """Curved lines for a loud sound, such as a twanging bowstring or a roar."""
+    return f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})" fill="none" stroke="#f9e79f" stroke-width="6" stroke-linecap="round"><path d="M0,-30 Q18,0 0,30"/><path d="M20,-50 Q48,0 20,50"/><path d="M40,-70 Q78,0 40,70"/></g>'
+def bg_river(far="#9ccc65",sky="url(#day)"):
+    """A wide river between two banks. Pass far="#14351f" for a dark forest on the far side."""
+    g=f'<rect width="1000" height="860" fill="{sky}"/>'
+    g+=f'<path d="M0,330 Q250,290 500,320 T1000,310 L1000,420 L0,420 Z" fill="{far}"/>'
+    g+='<rect y="400" width="1000" height="460" fill="url(#river)"/>'
+    for wx,wy in ((120,470),(420,500),(760,460),(260,560),(640,590),(880,540)): g+=f'<path d="M{wx-40},{wy} Q{wx-20},{wy-10} {wx},{wy} T{wx+40},{wy}" stroke="#d6eaf8" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    return g
+def bg_riverbank():
+    """Standing on a grassy bank, with the river and the far shore behind."""
+    g=bg_river()+'<circle cx="840" cy="130" r="56" fill="#fff6c9"/>'
+    g+='<path d="M0,600 Q250,570 500,600 T1000,590 L1000,860 L0,860 Z" fill="#8cc084"/>'
+    g+=tree(70,480,80,"#5b9a45")+tree(940,490,74)
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
