@@ -13,7 +13,7 @@ def T(x,y,lines,size=20,fill=INK,weight="400",anchor="start",lh=1.3):
     for i,l in enumerate(lines): o+=f'<tspan x="{x}" dy="{0 if i==0 else size*lh}">{l}</tspan>'
     return o+'</text>'
 
-def person(x,y,s=1,robe="#1f618d",skin="#c68642",trim="#f1c40f",hair="#2b1b12",crown=False,beard=None,beardlen=30,mood="smile",topknot=False,female=False,drape=None,arms="down",tiara=False,flip=False):
+def person(x,y,s=1,robe="#1f618d",skin="#c68642",trim="#f1c40f",hair="#2b1b12",crown=False,beard=None,beardlen=30,mood="smile",topknot=False,female=False,drape=None,arms="down",tiara=False,flip=False,eyes=True):
     g=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})">'
     def arm(x1,y1,x2,y2): return f'<path d="M{x1},{y1} L{x2},{y2}" stroke="{robe}" stroke-width="15" stroke-linecap="round"/><circle cx="{x2}" cy="{y2}" r="9" fill="{skin}"/>'
     if female: g+=f'<path d="M-36,-44 Q-46,10 -28,26 L28,26 Q46,10 36,-44 Z" fill="{hair}"/>'
@@ -33,7 +33,7 @@ def person(x,y,s=1,robe="#1f618d",skin="#c68642",trim="#f1c40f",hair="#2b1b12",c
     if tiara: g+='<path d="M-25,-61 Q0,-80 25,-61" stroke="#f1c40f" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="0" cy="-73" r="5" fill="#c0392b"/>'
     if female: g+='<circle cx="0" cy="-53" r="3" fill="#c0392b"/><circle cx="-34" cy="-30" r="4" fill="#f1c40f"/><circle cx="34" cy="-30" r="4" fill="#f1c40f"/>'
     g+='<circle cx="-21" cy="-29" r="6" fill="#e57373" opacity="0.35"/><circle cx="21" cy="-29" r="6" fill="#e57373" opacity="0.35"/>'
-    g+='<circle cx="-12" cy="-40" r="4" fill="#2b1b12"/><circle cx="12" cy="-40" r="4" fill="#2b1b12"/>'
+    if eyes: g+='<circle cx="-12" cy="-40" r="4" fill="#2b1b12"/><circle cx="12" cy="-40" r="4" fill="#2b1b12"/>'
     if mood=="sad": g+='<path d="M-9,-20 Q0,-28 9,-20" stroke="#2b1b12" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-19,-48 L-7,-53 M7,-53 L19,-48" stroke="#2b1b12" stroke-width="3" stroke-linecap="round"/>'
     else: g+='<path d="M-9,-26 Q0,-17 9,-26" stroke="#2b1b12" stroke-width="3" fill="none" stroke-linecap="round"/>'
     return g+'</g>'
@@ -188,6 +188,8 @@ def bg_riverbank():
     return g
 
 # ---- Added in Episode 5 ----
+# A divine astra appearing in its shining form, with no eyes so it reads as divine light. Draw it with arms="hold" (palms joined) over halo().
+ASTRA=dict(robe="#fdebd0",skin="#ffe9a8",trim="#f5b041",hair="#f8c471",tiara=True,eyes=False)
 def halo(x,y,r=120,c="#fff6c9"):
     """A soft circle of holy light behind a figure or a divine object."""
     return f'<circle cx="{x}" cy="{y}" r="{r}" fill="url(#glow)"/><circle cx="{x}" cy="{y}" r="{r*0.62:.0f}" fill="none" stroke="#f5b041" stroke-width="6" opacity="0.9"/>'

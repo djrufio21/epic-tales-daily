@@ -14,14 +14,14 @@ def s2():
     return g
 def s3():
     g=bg_dawn_forest(sun=False)
-    for ax,ay,an in ((520,330,-14),(690,270,0),(860,330,14)): g+=astra(ax,ay,1.25,an)
+    for ax,ay in ((500,330),(680,270),(850,330)): g+=halo(ax,ay-30,120)+person(ax,ay,1.3,arms="hold",**ASTRA)
     g+=person(200,500,1.6,**RAMA)
     return g
 def s4():
     g=bg_dawn_forest(sun=False)
-    g+=halo(600,320,150)+astra(600,320,1.4,0)
-    g+=astra(810,260,1.0,10)+astra(860,470,0.85,18)
-    g+=person(420,500,1.7,arms="raise",**RAMA)
+    g+=halo(650,340,150)+person(650,380,1.45,arms="hold",**ASTRA)
+    g+=halo(860,320,110)+person(860,350,1.05,arms="hold",**ASTRA)
+    g+=person(360,480,1.7,arms="raise",**RAMA)
     return g
 def s5():
     g=bg_dawn_forest()
