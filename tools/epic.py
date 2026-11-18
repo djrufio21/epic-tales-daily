@@ -188,11 +188,19 @@ def bg_riverbank():
     return g
 
 # ---- Added in Episode 5 ----
-# A divine astra appearing in its shining form. Draw it with arms="hold" (palms joined) over halo().
-ASTRA=dict(robe="#fdebd0",skin="#ffe9a8",trim="#f5b041",hair="#f8c471",tiara=True)
 def halo(x,y,r=120,c="#fff6c9"):
-    """A soft circle of holy light behind a figure."""
+    """A soft circle of holy light behind a figure or a divine object."""
     return f'<circle cx="{x}" cy="{y}" r="{r}" fill="url(#glow)"/><circle cx="{x}" cy="{y}" r="{r*0.62:.0f}" fill="none" stroke="#f5b041" stroke-width="6" opacity="0.9"/>'
+def astra(x,y,s=1,angle=0):
+    """A divine astra: a golden arrow glowing with holy light. (x,y) is its middle; angle 0 points straight up."""
+    a=f'<g transform="translate({x},{y}) rotate({angle}) scale({s})">'
+    a+='<circle r="105" fill="url(#glow)"/><circle r="62" fill="#fffaf0" opacity="0.45"/>'
+    a+='<line x1="0" y1="85" x2="0" y2="-70" stroke="#fffaf0" stroke-width="20" stroke-linecap="round" opacity="0.8"/>'
+    a+='<line x1="0" y1="85" x2="0" y2="-70" stroke="#d4ac0d" stroke-width="9" stroke-linecap="round"/>'
+    a+='<polygon points="0,-116 -24,-66 24,-66" fill="#f1c40f" stroke="#b7950b" stroke-width="3"/>'
+    a+='<path d="M0,62 L-20,92 L-20,72 L0,46 Z M0,62 L20,92 L20,72 L0,46 Z" fill="#f39c12" stroke="#b9770e" stroke-width="2"/>'
+    a+=spark(28,-92,10,"#fffaf0")+spark(-26,-30,8,"#fffaf0")
+    return a+'</g>'
 def bowing(x,y,s=1,angle=28,**kw):
     """A person leaning forward in a respectful bow, palms joined. Faces right; pass angle negative with flip=True to face left."""
     kw.setdefault("arms","hold")
