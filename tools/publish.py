@@ -7,10 +7,11 @@ Needs these environment variables (GitHub secrets):
   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN
 The blog is found from BLOG_URL below, so no blog ID is needed.
 """
-import html, json, os, pathlib, sys, urllib.parse, urllib.request
+import datetime, html, json, os, pathlib, sys, urllib.parse, urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 STATE = ROOT / "published.json"
+LAST = ROOT / "last_published.txt"  # Malaysia date of the last scheduled post
 REPO = os.environ.get("GITHUB_REPOSITORY", "djrufio21/epic-tales-daily")
 BRANCH = os.environ.get("GITHUB_REF_NAME", "main")
 BLOG_URL = "https://epictalesdaily.blogspot.com/"
@@ -70,6 +71,10 @@ def title_of(ep):
 def main():
     done = json.loads(STATE.read_text()) if STATE.exists() else []
     update = os.environ.get("UPDATE_EPISODE", "").strip()
+    today = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date().isoformat()
+    if not update and os.environ.get("EVENT_NAME") == "schedule" and LAST.exists() and LAST.read_text().strip() == today:
+        print("An episode was already published today (Malaysia time). Nothing to do.")
+        return 0
     d = (ROOT / "episodes" / update) if update else next_episode(done)
     if d is None:
         print("No unpublished episodes left. Nothing to do.")
@@ -95,6 +100,7 @@ def main():
     print("Published:", out.get("url"))
     done.append(d.name)
     STATE.write_text(json.dumps(done, indent=2) + "\n")
+    LAST.write_text(today + "\n")
     return 0
 
 

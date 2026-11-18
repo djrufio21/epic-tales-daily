@@ -44,7 +44,7 @@ Copy the field layout from `episodes/003/episode.json`.
 
 ## Publishing
 
-- `.github/workflows/publish.yml` runs daily at about 08:07 Malaysia time and posts the lowest numbered episode not yet listed in `published.json`.
+- `.github/workflows/publish.yml` runs every morning, with tries at 07:23, 08:41 and 10:17 Malaysia time, and posts at most one episode per day: it posts the lowest numbered episode not yet listed in `published.json`.
 - To publish now: run the workflow manually with the `update` box empty.
 - To refresh a post that is already live after changing its files: run the workflow with `update` set to the episode number, for example `002`.
 - Never edit `published.json` by hand.
