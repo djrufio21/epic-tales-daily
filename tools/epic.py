@@ -187,6 +187,38 @@ def bg_riverbank():
     g+=tree(70,480,80,"#5b9a45")+tree(940,490,74)
     return g
 
+# ---- Added in Episode 5 ----
+# A divine astra appearing in its shining form. Draw it with arms="hold" (palms joined) over halo().
+ASTRA=dict(robe="#fdebd0",skin="#ffe9a8",trim="#f5b041",hair="#f8c471",tiara=True)
+def halo(x,y,r=120,c="#fff6c9"):
+    """A soft circle of holy light behind a figure."""
+    return f'<circle cx="{x}" cy="{y}" r="{r}" fill="url(#glow)"/><circle cx="{x}" cy="{y}" r="{r*0.62:.0f}" fill="none" stroke="#f5b041" stroke-width="6" opacity="0.9"/>'
+def bowing(x,y,s=1,angle=28,**kw):
+    """A person leaning forward in a respectful bow, palms joined. Faces right; pass angle negative with flip=True to face left."""
+    kw.setdefault("arms","hold")
+    return f'<g transform="rotate({angle},{x},{y+120*s})">{person(x,y,s,**kw)}</g>'
+def hut(x,y,s=1):
+    """A thatched hermitage hut."""
+    return f'<g transform="translate({x},{y}) scale({s})"><rect x="-70" y="-60" width="140" height="90" fill="#c9a06a"/><path d="M-95,-55 L0,-140 L95,-55 Z" fill="#b8863b"/><path d="M-95,-55 L0,-140 L95,-55" stroke="#8a5a1c" stroke-width="5" fill="none"/><path d="M-20,30 L-20,-20 Q0,-40 20,-20 L20,30 Z" fill="#6e3b14"/></g>'
+def bg_dawn_forest(sun=True):
+    """Early morning in a forest clearing, with the sun rising in the east (on the right). Pass sun=False to leave the sky clear for glowing figures."""
+    g='<rect width="1000" height="860" fill="url(#sunrise)"/>'
+    if sun: g+='<circle cx="820" cy="330" r="220" fill="url(#glow)"/><circle cx="820" cy="330" r="80" fill="#fff6c9"/>'
+    for tx,tw in ((50,44),(200,30),(960,40)): g+=f'<rect x="{tx-tw/2}" y="0" width="{tw}" height="680" fill="#5a3d22"/>'
+    for cx,cy,r in ((30,50,130),(210,20,110),(990,60,110)): g+=f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="#3f6b35"/>'
+    g+='<path d="M0,620 Q250,590 500,615 T1000,610 L1000,860 L0,860 Z" fill="#7cb866"/>'
+    for bx in (110,880): g+=f'<circle cx="{bx}" cy="650" r="40" fill="#5b9a45"/>'
+    return g
+def bg_hermitage(huts=True):
+    """A peaceful grove at the foot of a hill, with hermitage huts among the trees."""
+    g='<rect width="1000" height="860" fill="url(#day)"/><circle cx="160" cy="120" r="50" fill="#fff6c9"/>'
+    g+='<path d="M380,470 Q560,170 760,200 Q900,230 1000,420 L1000,520 L380,520 Z" fill="#7d9b6a"/>'
+    g+='<path d="M0,500 Q250,450 500,490 T1000,480 L1000,860 L0,860 Z" fill="#9ccc65"/>'
+    g+=tree(620,380,60,"#5b9a45")+tree(900,370,66,"#6aa84f")
+    if huts: g+=hut(730,500,0.9)+hut(560,520,0.7)
+    g+='<path d="M0,620 Q250,595 500,620 T1000,612 L1000,860 L0,860 Z" fill="#8cc084"/>'
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
