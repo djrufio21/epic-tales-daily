@@ -188,8 +188,8 @@ def bg_riverbank():
     return g
 
 # ---- Added in Episode 5 ----
-# A divine astra appearing in its shining form, with no eyes so it reads as divine light. Draw it with arms="hold" (palms joined) over halo().
-ASTRA=dict(robe="#fdebd0",skin="#ffe9a8",trim="#f5b041",hair="#f8c471",tiara=True,eyes=False)
+# A divine astra appearing in its shining form. Draw it with arms="hold" (palms joined) over halo().
+ASTRA=dict(robe="#fdebd0",skin="#ffe9a8",trim="#f5b041",hair="#f8c471",tiara=True)
 def halo(x,y,r=120,c="#fff6c9"):
     """A soft circle of holy light behind a figure or a divine object."""
     return f'<circle cx="{x}" cy="{y}" r="{r}" fill="url(#glow)"/><circle cx="{x}" cy="{y}" r="{r*0.62:.0f}" fill="none" stroke="#f5b041" stroke-width="6" opacity="0.9"/>'
