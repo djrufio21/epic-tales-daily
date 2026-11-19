@@ -229,6 +229,42 @@ def bg_hermitage(huts=True):
     g+='<path d="M0,620 Q250,595 500,620 T1000,612 L1000,860 L0,860 Z" fill="#8cc084"/>'
     return g
 
+# ---- Added in Episode 6 ----
+# The sages who live at Siddhashrama (and other hermitage sages). Not Vasishtha, who is SAGE.
+HERMIT=dict(robe="#f0b27a",hair="#bdc3c7",beard="#bdc3c7",beardlen=55,topknot=True,trim="#ca6f1e")
+def stars(n=18,seed=6,top=40,bottom=320):
+    """Small twinkling stars for a night sky. The same seed always gives the same sky."""
+    r=random.Random(seed); g=''
+    for _ in range(n):
+        x,y=r.randint(30,970),r.randint(top,bottom); g+=spark(x,y,r.choice((5,7,9)),"#fdf2c4")
+    return g
+def moon(x,y,r=46):
+    """A crescent moon."""
+    return f'<circle cx="{x}" cy="{y}" r="{r}" fill="#fdf2c4"/><circle cx="{x+r*0.45:.0f}" cy="{y-r*0.2:.0f}" r="{r*0.85:.0f}" fill="#16234a"/>'
+def wind(x,y,s=1,flip=False,c="#d6eaf8"):
+    """Curling gusts of a strong wind blowing to the right (flip=True blows left)."""
+    return f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})" fill="none" stroke="{c}" stroke-width="7" stroke-linecap="round"><path d="M-120,-40 L40,-40 Q80,-40 80,-70 Q80,-95 55,-95"/><path d="M-150,10 L90,10 Q130,10 130,40 Q130,65 105,65"/><path d="M-100,60 L10,60"/></g>'
+def trail(x1,y1,x2,y2,c="#fff6c9"):
+    """A curved dotted path showing something flying far away, from (x1,y1) to (x2,y2)."""
+    mx,my=(x1+x2)/2,min(y1,y2)-120
+    return f'<path d="M{x1},{y1} Q{mx:.0f},{my:.0f} {x2},{y2}" stroke="{c}" stroke-width="7" stroke-dasharray="4 18" stroke-linecap="round" fill="none" opacity="0.9"/>'
+def altar(x,y,s=1):
+    """A square yajna altar (vedi) of brick with the sacred fire burning on it. (x,y) is the middle of its base."""
+    g=f'<g transform="translate({x},{y}) scale({s})">'
+    g+='<path d="M0,-40 Q-70,-100 -30,-160 Q-15,-125 0,-200 Q30,-130 40,-150 Q80,-90 0,-40 Z" fill="#e67e22"/><path d="M0,-40 Q-38,-80 -8,-118 Q0,-98 8,-138 Q42,-84 0,-40 Z" fill="#f9e79f"/>'
+    g+='<rect x="-90" y="-48" width="180" height="30" fill="#b03a2e"/><rect x="-110" y="-20" width="220" height="20" fill="#922b21"/>'
+    for bx in (-80,-40,0,40): g+=f'<line x1="{bx+20}" y1="-48" x2="{bx+20}" y2="-18" stroke="#7b241c" stroke-width="2"/>'
+    g+='<line x1="-90" y1="-33" x2="90" y2="-33" stroke="#7b241c" stroke-width="2"/>'
+    return g+'</g>'
+def bg_hermitage_night():
+    """The hermitage clearing at night, under the moon and stars."""
+    g='<rect width="1000" height="860" fill="url(#night)"/>'+stars()+moon(150,120)
+    g+='<path d="M380,470 Q560,170 760,200 Q900,230 1000,420 L1000,520 L380,520 Z" fill="#2c3e50"/>'
+    g+='<path d="M0,500 Q250,450 500,490 T1000,480 L1000,860 L0,860 Z" fill="#33513a"/>'
+    g+=tree(620,380,60,"#1e3a26")+tree(900,370,66,"#24452c")
+    g+='<path d="M0,620 Q250,595 500,620 T1000,612 L1000,860 L0,860 Z" fill="#3f6343"/>'
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
