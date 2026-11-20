@@ -10,7 +10,7 @@ Drawn episodes are marked done. The rest is a plan and can be adjusted.
 | 4 | The Forest of Tataka | Dharma (doing what is right, protecting the helpless) | Done |
 | 5 | Gifts From the Sage | Kritajnata (gratitude to the teacher) | Done |
 | 6 | Guarding the Sacred Fire | Kartavya (doing your duty) | Done |
-| 7 | The Story of the River Ganga | Shravana (listening and learning) | To draw |
+| 7 | The Story of the River Ganga | Shravana (listening and learning) | Done |
 | 8 | Ahalya Is Set Free | Karuna (compassion) | To draw |
 | 9 | The City of Mithila | Atithi seva (honouring a guest) | To draw |
 | 10 | The Great Bow of Shiva | Dhairya (steady courage) | To draw |

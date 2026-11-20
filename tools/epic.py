@@ -265,6 +265,82 @@ def bg_hermitage_night():
     g+='<path d="M0,620 Q250,595 500,620 T1000,612 L1000,860 L0,860 Z" fill="#3f6343"/>'
     return g
 
+# ---- Added in Episode 7 ----
+# King Sagara of Ayodhya, ancestor of Rama, and his sixty thousand sons.
+SAGARA=dict(robe="#154360",beard="#aab7b8",crown=True)
+SAGARA_SON=dict(robe="#5d6d7e",skin="#c68642",tiara=True)
+# King Bhagiratha, Sagara's great great grandson, who brought the Ganga to earth.
+BHAGIRATHA=dict(robe="#117a65",beard="#2b1b12",beardlen=0,crown=True)
+# Sage Kapila, who sat in tapas deep beneath the earth.
+KAPILA=dict(robe="#fbeee0",hair="#2b1b12",beard="#2b1b12",beardlen=55,topknot=True,trim="#e67e22")
+# Lord Shiva: ash blue skin, tiger skin robe, matted locks with the crescent moon. Draw him with shiva(), never person().
+SHIVA=dict(robe="#d68910",drape="#b9770e",skin="#a9c3d6",trim="#6e2c00",hair="#3b2414")
+def shiva(x,y,s=1,arms="up2"):
+    """Lord Shiva with his jata (matted locks), the crescent moon and the third eye. Shown with reverence, always calm."""
+    tr=f'translate({x},{y}) scale({s})'
+    g=f'<g transform="{tr}"><path d="M-38,-46 Q-52,20 -30,40 L30,40 Q52,20 38,-46 Z" fill="#3b2414"/></g>'
+    g+=person(x,y,s,arms=arms,**SHIVA)
+    g+=f'<g transform="{tr}">'
+    g+='<ellipse cx="0" cy="-90" rx="26" ry="30" fill="#3b2414"/><path d="M-18,-108 Q0,-124 18,-108" stroke="#5d4037" stroke-width="4" fill="none"/>'
+    g+='<path d="M10,-112 A16,16 0 1 0 30,-90 A12,12 0 1 1 10,-112 Z" fill="#fdf2c4"/>'
+    g+='<ellipse cx="0" cy="-49" rx="2.5" ry="5" fill="#c0392b"/></g>'
+    return g
+def trishula(x,y,h=300):
+    """Lord Shiva's trident, standing upright. (x,y) is the foot of the shaft."""
+    t=y-h
+    return f'<line x1="{x}" y1="{y}" x2="{x}" y2="{t}" stroke="#5d4037" stroke-width="8" stroke-linecap="round"/><path d="M{x-34},{t-40} Q{x-34},{t+8} {x},{t+8} Q{x+34},{t+8} {x+34},{t-40} L{x+26},{t-40} Q{x+24},{t-4} {x},{t-4} Q{x-24},{t-4} {x-26},{t-40} Z" fill="#d4ac0d"/><polygon points="{x},{t-60} {x-7},{t-4} {x+7},{t-4}" fill="#d4ac0d"/>'
+def horse(x,y,s=1,flip=False,c="#fdfefe",mane="#d5c4a1"):
+    """A white horse standing side on, facing right (flip=True faces left). (x,y) is the middle of its body."""
+    g=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})">'
+    for lx in (-62,-40,40,62): g+=f'<rect x="{lx-7}" y="10" width="14" height="92" rx="6" fill="{c}" stroke="#a6acaf" stroke-width="2"/><rect x="{lx-8}" y="94" width="16" height="10" fill="#5d4037"/>'
+    g+=f'<path d="M-88,-10 Q-128,10 -118,70" stroke="{mane}" stroke-width="14" fill="none" stroke-linecap="round"/>'
+    g+=f'<ellipse cx="0" cy="0" rx="92" ry="44" fill="{c}" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<path d="M58,-20 L92,-104 L124,-92 L96,-6 Z" fill="{c}" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<path d="M88,-110 L150,-82 Q160,-70 146,-62 L110,-70 Z" fill="{c}" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<polygon points="94,-110 100,-132 108,-108" fill="{c}" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<path d="M88,-104 Q70,-60 62,-18" stroke="{mane}" stroke-width="12" fill="none" stroke-linecap="round"/>'
+    g+='<circle cx="116" cy="-92" r="5" fill="#2b1b12"/><path d="M-60,-40 Q0,-52 60,-40 L56,-26 Q0,-38 -56,-26 Z" fill="#c0392b"/>'
+    return g+'</g>'
+def chariot(x,y,s=1,flip=False):
+    """A royal chariot facing right (flip=True faces left). Put the driver at about (x-10, y-150) at the same scale, then draw chariot() after him. (x,y) is the ground under the wheel."""
+    g=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})">'
+    g+='<line x1="70" y1="-90" x2="210" y2="-110" stroke="#7a4a1c" stroke-width="9" stroke-linecap="round"/>'
+    g+='<path d="M-90,-170 L80,-170 L96,-80 L-100,-80 Z" fill="#c9812a" stroke="#7a4a1c" stroke-width="4"/><rect x="-100" y="-100" width="196" height="20" fill="#f1c40f"/>'
+    g+='<line x1="-90" y1="-170" x2="-90" y2="-260" stroke="#7a4a1c" stroke-width="6"/><polygon points="-90,-260 -50,-246 -90,-232" fill="#c0392b"/>'
+    g+='<circle cx="0" cy="-60" r="58" fill="none" stroke="#6e3b14" stroke-width="12"/>'
+    for k in range(6):
+        a=k*math.pi/6; g+=f'<line x1="{-55*math.cos(a):.0f}" y1="{-60-55*math.sin(a):.0f}" x2="{55*math.cos(a):.0f}" y2="{-60+55*math.sin(a):.0f}" stroke="#6e3b14" stroke-width="5"/>'
+    return g+'<circle cx="0" cy="-60" r="10" fill="#f1c40f"/></g>'
+def ashes(x,y,s=1):
+    """A small heap of grey ashes with a curl of smoke. Used instead of showing anyone hurt."""
+    return f'<g transform="translate({x},{y}) scale({s})"><path d="M-70,0 Q-40,-50 0,-56 Q40,-50 70,0 Z" fill="#95a5a6"/><path d="M-40,-10 Q0,-40 40,-10" stroke="#bdc3c7" stroke-width="5" fill="none"/><path d="M0,-64 Q-20,-90 0,-112 Q20,-134 0,-158" stroke="#d5d8dc" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.7"/></g>'
+def soul(x,y,r=22):
+    """A small glowing light rising up to heaven: a soul set free."""
+    return f'<circle cx="{x}" cy="{y}" r="{r*2.2:.0f}" fill="url(#glow)"/><circle cx="{x}" cy="{y}" r="{r}" fill="#fff6c9" stroke="#f5b041" stroke-width="3"/>'
+def post(x,y,h=170):
+    """An empty wooden post with a loose rope, where an animal was tied."""
+    return f'<rect x="{x-10}" y="{y-h}" width="20" height="{h}" fill="#7a4a1c"/><path d="M{x+10},{y-h+30} Q{x+60},{y-h+80} {x+40},{y-10} Q{x+70},{y} {x+90},{y-8}" stroke="#d4ac0d" stroke-width="5" fill="none" stroke-linecap="round"/>'
+def ganga_fall(x,top=0,bottom=300,w=90):
+    """The holy Ganga pouring straight down from the sky, ending at (x,bottom)."""
+    g=f'<path d="M{x-w},{top} Q{x-w*0.4},{(top+bottom)/2:.0f} {x-w*0.25},{bottom} L{x+w*0.25},{bottom} Q{x+w*0.4},{(top+bottom)/2:.0f} {x+w},{top} Z" fill="url(#river)" opacity="0.95"/>'
+    for k in (-0.5,0,0.5): g+=f'<path d="M{x+w*k:.0f},{top} Q{x+w*k*0.5:.0f},{(top+bottom)/2:.0f} {x+w*k*0.2:.0f},{bottom-10}" stroke="#d6eaf8" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    return g
+def bg_himalaya():
+    """High snowy peaks of the Himalaya under a clear sky."""
+    g='<rect width="1000" height="860" fill="url(#day)"/>'
+    g+='<polygon points="-60,620 180,240 420,620" fill="#85929e"/><polygon points="180,240 120,336 160,320 200,350 240,330" fill="#fdfefe"/>'
+    g+='<polygon points="560,620 820,200 1080,620" fill="#7f8c8d"/><polygon points="820,200 755,305 800,290 840,320 885,300" fill="#fdfefe"/>'
+    g+='<polygon points="230,640 500,300 770,640" fill="#a6acaf"/><polygon points="500,300 430,390 470,375 510,400 560,380" fill="#fdfefe"/>'
+    g+='<path d="M0,620 Q250,590 500,615 T1000,608 L1000,860 L0,860 Z" fill="#b3b6b7"/><path d="M0,700 Q250,680 500,700 T1000,692 L1000,860 L0,860 Z" fill="#9aa5a8"/>'
+    return g
+def bg_underground():
+    """A great cave deep under the earth, lit by a soft glow."""
+    g='<rect width="1000" height="860" fill="#3e2a1a"/><ellipse cx="500" cy="520" rx="560" ry="420" fill="#5d4130"/><circle cx="500" cy="420" r="360" fill="url(#glow)" opacity="0.25"/>'
+    for x0 in (0,170,340,520,700,860): g+=f'<polygon points="{x0},0 {x0+140},0 {x0+70},{110+(x0%3)*30}" fill="#2e1f14"/>'
+    g+='<path d="M0,650 Q250,620 500,645 T1000,640 L1000,860 L0,860 Z" fill="#6e4f36"/>'
+    for rx,ry,r in ((80,700,40),(930,690,46),(200,780,30),(820,790,34)): g+=rock(rx,ry,r,"#4e3b2a")
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
