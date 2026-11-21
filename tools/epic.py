@@ -341,6 +341,41 @@ def bg_underground():
     for rx,ry,r in ((80,700,40),(930,690,46),(200,780,30),(820,790,34)): g+=rock(rx,ry,r,"#4e3b2a")
     return g
 
+# ---- Added in Episode 8 ----
+# Sage Gautama, whose hermitage stood near Mithila, and his wife Ahalya.
+GAUTAMA=dict(robe="#cd6155",hair="#ecf0f1",beard="#d5d8dc",beardlen=65,topknot=True,trim="#922b21")
+AHALYA=dict(robe="#f4ecf7",drape="#d2b4de",trim="#a569bd",female=True)
+def faded(svg,opacity=0.3):
+    """Draw anything see-through, for someone who cannot be seen, or a memory fading away."""
+    return f'<g opacity="{opacity}">{svg}</g>'
+def old_hut(x,y,s=1):
+    """A hermitage hut left empty for a very long time: grey thatch with a gap, and vines climbing the walls."""
+    g=f'<g transform="translate({x},{y}) scale({s})"><rect x="-70" y="-60" width="140" height="90" fill="#a89f91"/><path d="M-95,-55 L0,-140 L95,-55 Z" fill="#8c8070"/><path d="M10,-120 L40,-92 L18,-80 Z" fill="#6f6658"/>'
+    g+='<path d="M-20,30 L-20,-20 Q0,-40 20,-20 L20,30 Z" fill="#4d4337"/>'
+    g+='<path d="M-62,30 Q-80,-10 -58,-40 Q-44,-60 -60,-80" stroke="#556b2f" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M62,30 Q78,-6 56,-36" stroke="#556b2f" stroke-width="6" fill="none" stroke-linecap="round"/>'
+    for lx,ly in ((-70,-6),(-56,-44),(-64,-74),(72,-4),(58,-30)): g+=f'<ellipse cx="{lx}" cy="{ly}" rx="9" ry="5" fill="#6b8e23"/>'
+    return g+'</g>'
+def flower_rain(n=22,seed=8,top=20,bottom=420):
+    """Flowers falling from the sky as a blessing from the devas. The same seed always gives the same shower."""
+    r=random.Random(seed); g=''
+    for _ in range(n):
+        x,y=r.randint(30,970),r.randint(top,bottom); c=r.choice(("#f1948a","#f8c471","#fdfefe","#f5b7b1","#f7dc6f"))
+        for k in range(5):
+            a=k*2*math.pi/5; g+=f'<circle cx="{x+7*math.cos(a):.0f}" cy="{y+7*math.sin(a):.0f}" r="6" fill="{c}"/>'
+        g+=f'<circle cx="{x}" cy="{y}" r="4" fill="#d68910"/>'
+    return g
+def bg_old_hermitage():
+    """A hermitage left empty for many years: dry grass, bare trees and a lonely hut."""
+    g='<rect width="1000" height="860" fill="#d9d4c3"/><circle cx="160" cy="120" r="50" fill="#f4eed7"/>'
+    g+='<path d="M380,470 Q560,170 760,200 Q900,230 1000,420 L1000,520 L380,520 Z" fill="#8f927a"/>'
+    g+='<path d="M0,500 Q250,450 500,490 T1000,480 L1000,860 L0,860 Z" fill="#b5a978"/>'
+    for tx,ty in ((620,300),(900,290)):
+        g+=f'<path d="M{tx},{ty+200} L{tx},{ty} M{tx},{ty+60} L{tx-50},{ty+10} M{tx},{ty+40} L{tx+44},{ty-6} M{tx},{ty+100} L{tx+50},{ty+60}" stroke="#6e5a44" stroke-width="10" stroke-linecap="round" fill="none"/>'
+    g+=old_hut(740,510,0.9)
+    g+='<path d="M0,620 Q250,595 500,620 T1000,612 L1000,860 L0,860 Z" fill="#a39766"/>'
+    for gx in range(30,1000,90): g+=f'<path d="M{gx-12},{700+(gx%4)*30} L{gx-4},{670+(gx%4)*30} M{gx},{700+(gx%4)*30} L{gx+2},{662+(gx%4)*30} M{gx+12},{700+(gx%4)*30} L{gx+8},{672+(gx%4)*30}" stroke="#8a7a4a" stroke-width="4" stroke-linecap="round"/>'
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
