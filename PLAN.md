@@ -12,7 +12,7 @@ Drawn episodes are marked done. The rest is a plan and can be adjusted.
 | 6 | Guarding the Sacred Fire | Kartavya (doing your duty) | Done |
 | 7 | The Story of the River Ganga | Shravana (listening and learning) | Done |
 | 8 | Ahalya Is Set Free | Karuna (compassion) | Done |
-| 9 | The City of Mithila | Atithi seva (honouring a guest) | To draw |
+| 9 | The City of Mithila | Atithi seva (honouring a guest) | Done |
 | 10 | The Great Bow of Shiva | Dhairya (steady courage) | To draw |
 | 11 | Rama and Sita | Mangala (starting well, with blessings) | To draw |
 | 12 | Four Weddings in Mithila | Kutumba (love of family) | To draw |

@@ -376,6 +376,39 @@ def bg_old_hermitage():
     for gx in range(30,1000,90): g+=f'<path d="M{gx-12},{700+(gx%4)*30} L{gx-4},{670+(gx%4)*30} M{gx},{700+(gx%4)*30} L{gx+2},{662+(gx%4)*30} M{gx+12},{700+(gx%4)*30} L{gx+8},{672+(gx%4)*30}" stroke="#8a7a4a" stroke-width="4" stroke-linecap="round"/>'
     return g
 
+# ---- Added in Episode 9 ----
+# King Janaka of Mithila, the wise rajarshi: white robe with a gold drape and a grey beard. Not Dasharatha, who is KING.
+JANAKA=dict(robe="#fdfefe",drape="#f5b041",trim="#d4ac0d",beard="#aab7b8",beardlen=40,crown=True)
+# Shatananda, Janaka's family priest and the eldest son of Gautama and Ahalya.
+SHATANANDA=dict(robe="#f5b041",hair="#3b2414",beard="#3b2414",beardlen=45,topknot=True,trim="#a04000")
+def kalash(x,y,s=1):
+    """A brass water pot crowned with mango leaves and a coconut, used to welcome honoured guests. (x,y) is its base."""
+    g=f'<g transform="translate({x},{y}) scale({s})">'
+    for a in (-50,-25,25,50): g+=f'<ellipse cx="0" cy="-96" rx="9" ry="26" fill="#27ae60" transform="rotate({a},0,-78)"/>'
+    g+='<circle cx="0" cy="-100" r="18" fill="#8d5524"/>'
+    g+='<rect x="-16" y="-84" width="32" height="16" fill="#d4ac0d" stroke="#9a7d0a" stroke-width="2"/>'
+    g+='<path d="M-20,-70 Q-48,-60 -46,-34 Q-42,0 0,0 Q42,0 46,-34 Q48,-60 20,-70 Z" fill="#d4ac0d" stroke="#9a7d0a" stroke-width="3"/>'
+    g+='<path d="M-42,-40 Q0,-26 42,-40" stroke="#c0392b" stroke-width="5" fill="none"/>'
+    return g+'</g>'
+def mandap(x,y,s=1,c="#f5b7b1",roof="#c0392b"):
+    """An open festival pavilion with four posts and a bright canopy, as at a great yajna. (x,y) is the middle of its floor."""
+    g=f'<g transform="translate({x},{y}) scale({s})">'
+    g+=f'<polygon points="-150,-180 150,-180 0,-270" fill="{roof}"/><line x1="0" y1="-270" x2="0" y2="-310" stroke="#7a4a1c" stroke-width="4"/><polygon points="0,-310 30,-300 0,-290" fill="#f1c40f"/>'
+    for k in range(11): g+=f'<circle cx="{-150+k*30}" cy="-180" r="15" fill="{c}"/>'
+    g+=f'<rect x="-150" y="-196" width="300" height="16" fill="{c}"/>'
+    for px in (-125,-45,45,125): g+=f'<rect x="{px-8}" y="-180" width="16" height="180" fill="#e2b97a" stroke="#c9812a" stroke-width="2"/>'
+    g+='<rect x="-150" y="-6" width="300" height="16" fill="#c9812a"/>'
+    return g+'</g>'
+def bg_mithila(sky="url(#day)",sun="#fff6c9"):
+    """The great yajna grounds outside Mithila: bright pavilions, with Janaka's white palace far away. Pass sky="url(#dusk)" for evening."""
+    g=f'<rect width="1000" height="860" fill="{sky}"/><circle cx="160" cy="130" r="52" fill="{sun}"/>'
+    g+='<path d="M0,470 Q250,430 500,460 T1000,450 L1000,560 L0,560 Z" fill="#a8c686"/>'
+    g+=palace(560,170,0.6,c1="#f8f1e4",c2="#efe1c6",c3="#d7bde2",dk="#8e6e53")
+    g+='<path d="M0,530 Q250,500 500,525 T1000,515 L1000,860 L0,860 Z" fill="#9ccc65"/>'
+    g+=mandap(130,560,0.6,"#f9e79f","#e67e22")+mandap(420,545,0.5,"#aed6f1","#1f618d")+mandap(880,560,0.62,"#f5b7b1","#c0392b")
+    g+='<path d="M0,640 Q250,615 500,640 T1000,632 L1000,860 L0,860 Z" fill="#8cc084"/>'
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
