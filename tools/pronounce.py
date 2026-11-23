@@ -33,7 +33,7 @@ IPA = {
     "Ahalya": "əhˈʌljaː", "Shatananda": "ʃətaːnˈʌndə", "Kapila": "kˈʌpɪlə",
     "Valmiki": "ʋaːlmˈiːkiː", "Vyasa": "ʋjˈaːsə", "Parashurama": "pəɾəʃʊɾˈaːmə",
     # Kings of old
-    "Sagara": "sˈʌɡəɾə", "Bhagiratha": "bʰəɡˈiːɾətʰə",
+    "Sagara": "sˈʌɡəɾə", "Bhagiratha": "bʰəɡˈiːɾətʰə", "Devarata": "deːʋəɾˈaːtə",
     # Gods and divine beings
     "Shiva": "ʃˈɪʋə", "Vishnu": "ʋˈɪʂɳʊ", "Brahma": "bɾˈʌhmaː", "Indra": "ˈɪndɾə",
     "Vamana": "ʋˈaːmənə", "Hanuman": "hˈʌnʊmaːn", "Pinaka": "pɪnˈaːkə",

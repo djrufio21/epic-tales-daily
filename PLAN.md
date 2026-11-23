@@ -13,8 +13,20 @@ Drawn episodes are marked done. The rest is a plan and can be adjusted.
 | 7 | The Story of the River Ganga | Shravana (listening and learning) | Done |
 | 8 | Ahalya Is Set Free | Karuna (compassion) | Done |
 | 9 | The City of Mithila | Atithi seva (honouring a guest) | Done |
-| 10 | The Great Bow of Shiva | Dhairya (steady courage) | To draw |
+| 10 | The Great Bow of Shiva | Dhairya (steady courage) | Done |
 | 11 | Rama and Sita | Mangala (starting well, with blessings) | To draw |
 | 12 | Four Weddings in Mithila | Kutumba (love of family) | To draw |
 | 13 | Parashurama's Challenge | Shanti (staying calm) | To draw |
 | 14 | Home to Ayodhya | Seva (serving parents and elders) | To draw |
+
+## Ayodhya Kanda
+
+| No. | Title | Value | Status |
+|---|---|---|---|
+| 15 | The King's Happy Plan | Sadachara (good conduct that wins hearts) | To draw |
+| 16 | Manthara's Whisper | Viveka (thinking wisely before you act) | To draw |
+| 17 | Kaikeyi's Two Wishes | Pratijna (keeping a promise, even when it hurts) | To draw |
+| 18 | Rama Accepts the Forest | Samata (staying steady in joy and sorrow) | To draw |
+| 19 | Sita and Lakshmana Choose to Go | Nishtha (loyal devotion) | To draw |
+| 20 | Goodbye to Ayodhya | Tyaga (letting go for the sake of others) | To draw |
+| 21 | Guha the Boatman Friend | Maitri (true friendship) | To draw |

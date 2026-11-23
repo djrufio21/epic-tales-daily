@@ -409,6 +409,65 @@ def bg_mithila(sky="url(#day)",sun="#fff6c9"):
     g+='<path d="M0,640 Q250,615 500,640 T1000,632 L1000,860 L0,860 Z" fill="#8cc084"/>'
     return g
 
+# ---- Added in Episode 10 ----
+# Kings from other lands who came to Mithila to try the great bow.
+SUITOR=dict(robe="#6c3483",drape="#a569bd",beard="#2b1b12",beardlen=10,crown=True)
+SUITOR2=dict(robe="#0e6655",drape="#48c9b0",beard="#5d4037",beardlen=20,crown=True)
+# The strong men of Mithila who pulled the great bow's cart.
+STRONGMAN=dict(robe="#ba4a00",skin="#a0522d",trim="#784212",hair="#2b1b12")
+def great_bow(x,y,s=1,angle=0,strung=True,broken=False):
+    """Lord Shiva's great bow: dark wood bound with gold, about 420 long at s=1. (x,y) is its middle grip; angle 0 stands it upright with the curve to the right.
+    broken=True shows it snapped in two at the grip, the halves tipping apart with a burst of light."""
+    def half(sign):
+        p=f'<path d="M0,{sign*12} Q{60},{sign*110} 0,{sign*210}" stroke="#4a2c14" stroke-width="16" fill="none" stroke-linecap="round"/>'
+        p+=f'<path d="M0,{sign*12} Q{60},{sign*110} 0,{sign*210}" stroke="#d4ac0d" stroke-width="5" stroke-dasharray="14 22" fill="none"/>'
+        p+=f'<circle cx="0" cy="{sign*214}" r="12" fill="#f1c40f" stroke="#9a7d0a" stroke-width="3"/>'
+        return p
+    g=f'<g transform="translate({x},{y}) rotate({angle}) scale({s})">'
+    if broken:
+        g+='<circle r="80" fill="url(#glow)"/>'+spark(20,0,30,"#fffaf0")
+        g+=f'<g transform="translate(-14,-8) rotate(-24)">{half(-1)}</g><g transform="translate(-14,8) rotate(24)">{half(1)}</g>'
+        return g+'</g>'
+    if strung: g+='<line x1="0" y1="-214" x2="0" y2="214" stroke="#fffaf0" stroke-width="3"/>'
+    g+=half(-1)+half(1)+'<rect x="-6" y="-22" width="26" height="44" rx="8" fill="#c0392b" stroke="#7b241c" stroke-width="3"/>'
+    return g+'</g>'
+def bow_cart(x,y,s=1,bow=False):
+    """The long iron chest on eight wheels that carried the great bow, seen side on. (x,y) is the ground under its middle.
+    bow=True shows the lid open with the bow lying on top."""
+    g=f'<g transform="translate({x},{y}) scale({s})">'
+    if bow: g+=great_bow(0,-150,0.95,angle=-90,strung=False)
+    g+='<rect x="-250" y="-150" width="500" height="90" rx="10" fill="#5d6d7e" stroke="#2c3e50" stroke-width="5"/>'
+    g+='<rect x="-250" y="-150" width="500" height="16" fill="#d4ac0d"/><rect x="-250" y="-76" width="500" height="12" fill="#d4ac0d"/>'
+    for bx in (-180,-60,60,180): g+=f'<circle cx="{bx}" cy="-105" r="10" fill="#d4ac0d" stroke="#9a7d0a" stroke-width="2"/>'
+    for wx in (-200,-70,70,200): g+=f'<circle cx="{wx}" cy="-34" r="34" fill="#34495e" stroke="#1c2833" stroke-width="6"/><circle cx="{wx}" cy="-34" r="9" fill="#d4ac0d"/>'
+    return g+'</g>'
+def rope(x1,y1,x2,y2):
+    """A thick pulling rope from (x1,y1) to (x2,y2), sagging a little."""
+    return f'<path d="M{x1},{y1} Q{(x1+x2)/2:.0f},{max(y1,y2)+30:.0f} {x2},{y2}" stroke="#a0522d" stroke-width="8" fill="none" stroke-linecap="round"/>'
+def plough(x,y,s=1,flip=False):
+    """A golden plough for a royal yajna field, its blade cutting the earth at (x,y). Faces right; flip=True faces left."""
+    g=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})">'
+    g+='<line x1="0" y1="0" x2="230" y2="-70" stroke="#7a4a1c" stroke-width="12" stroke-linecap="round"/>'
+    g+='<line x1="10" y1="-10" x2="-60" y2="-150" stroke="#7a4a1c" stroke-width="10" stroke-linecap="round"/><line x1="-75" y1="-150" x2="-45" y2="-150" stroke="#7a4a1c" stroke-width="10" stroke-linecap="round"/>'
+    g+='<path d="M-10,-14 L34,-4 L10,18 Z" fill="#f1c40f" stroke="#b7950b" stroke-width="3"/>'
+    return g+'</g>'
+def baby(x,y,s=1,skin="#e8b98a",wrap="#fdebd0"):
+    """A newborn baby wrapped in cloth, lying down. (x,y) is the middle of the bundle."""
+    g=f'<g transform="translate({x},{y}) scale({s})"><ellipse cx="12" cy="0" rx="46" ry="22" fill="{wrap}" stroke="#d4ac0d" stroke-width="3"/>'
+    g+=f'<circle cx="-40" cy="-6" r="22" fill="{skin}"/><path d="M-50,-26 Q-40,-34 -30,-26" stroke="#2b1b12" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    g+='<path d="M-50,-8 Q-46,-12 -42,-8 M-36,-8 Q-32,-12 -28,-8" stroke="#2b1b12" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M-44,2 Q-38,7 -32,2" stroke="#2b1b12" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
+    return g+'</g>'
+def bg_field():
+    """A freshly ploughed field outside Mithila, with furrows running across it and the white palace far away."""
+    g='<rect width="1000" height="860" fill="url(#day)"/><circle cx="840" cy="120" r="52" fill="#fff6c9"/>'
+    g+='<path d="M0,430 Q250,400 500,425 T1000,418 L1000,520 L0,520 Z" fill="#a8c686"/>'
+    g+=palace(620,150,0.45,c1="#f8f1e4",c2="#efe1c6",c3="#d7bde2",dk="#8e6e53")
+    g+='<path d="M0,500 Q250,480 500,500 T1000,494 L1000,860 L0,860 Z" fill="#a0703c"/>'
+    for k in range(7):
+        fy=540+k*48; g+=f'<path d="M0,{fy} Q500,{fy-14} 1000,{fy}" stroke="#7a4a1c" stroke-width="{4+k}" fill="none"/>'
+    g+=tree(70,400,70,"#5b9a45")
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
