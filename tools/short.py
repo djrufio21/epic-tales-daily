@@ -4,7 +4,8 @@ Usage: python tools/short.py 001 [out_dir]
 
 Writes out_dir/NNN.mp4 (1080x1920, 30 fps) and out_dir/NNN.json (title,
 description, tags) built from episodes/NNN. Narration is made on the machine
-with the free Kokoro voice model (no paid service, no account). The soft
+with the free Kokoro voice model (no paid service, no account). Indian and
+Sanskrit words are spoken from the sound list in tools/pronounce.py. The soft
 tanpura drone underneath is generated in code, so there is no music licence
 to worry about.
 
@@ -18,6 +19,9 @@ import numpy as np
 import soundfile as sf
 from PIL import Image, ImageDraw, ImageFont
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from pronounce import to_phonemes
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BLOG = "epictalesdaily.blogspot.com"
 W, H, FPS, SR = 1080, 1920, 30, 24000
@@ -25,20 +29,6 @@ VOICE, SPEED = "af_heart", 0.92
 MODEL_URLS = {
     "kokoro.onnx": "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.int8.onnx",
     "voices.bin": "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin",
-}
-
-# Spell names the way they sound, so the English voice says them properly.
-# Only the narration uses these. The words on screen keep the real spelling.
-SAY = {
-    "Dasharatha": "Dussha-ruttha", "Ayodhya": "Ayo-dhya", "Sarayu": "Suh-ruh-yoo",
-    "Vasishtha": "Vuh-sish-tuh", "Vishvamitra": "Vish-vaa-mitra", "Kausalya": "Kow-sul-yaa",
-    "Kaikeyi": "Kai-kay-yee", "Sumitra": "Soo-mitra", "Lakshmana": "Luck-shmun",
-    "Bharata": "Bha-rut", "Shatrughna": "Shuh-troog-na", "Tataka": "Taa-tuh-kaa",
-    "Ahalya": "Uh-hull-yaa", "Mithila": "Mi-thi-laa", "Janaka": "Juh-nuck", "Ganga": "Gung-gaa",
-    "Shraddha": "Shraddhaa", "Vinaya": "Vi-nuh-yuh", "Satya": "Sut-yuh", "Dharma": "Dhur-muh",
-    "Kritajnata": "Krit-ug-yuh-taa", "Kartavya": "Kur-tuv-yuh", "Shravana": "Shruh-vun",
-    "Karuna": "Kuh-roo-naa", "Atithi": "Uh-ti-thi", "Dhairya": "Dhai-ryuh", "seva": "say-vaa",
-    "Ramayana": "Raa-maa-yun", "Mahabharata": "Muh-haa-bhaa-rut", "Rama": "Raama", "Sita": "Seetaa",
 }
 
 BG = (28, 18, 40)          # deep plum, matches the warm palette of the drawings
@@ -78,14 +68,12 @@ def text_block(draw, text, f, top, width=960, fill=CREAM, gap=1.32):
     return top + len(wrap(draw, text, f, width)) * lh
 
 
-def spoken(text):
-    for k, v in SAY.items():
-        text = re.sub(rf"\b{k}\b", v, text)
-    return text.replace("“", "").replace("”", "").replace('"', "")
-
-
 def narrate(kokoro, text):
-    samples, sr = kokoro.create(spoken(text), voice=VOICE, speed=SPEED, lang="en-us")
+    """Indian and Sanskrit words use the sounds in pronounce.py, the rest is English."""
+    text = re.sub("[“”\"]", "", text)
+    english = lambda t: kokoro.tokenizer.phonemize(t, "en-us")
+    samples, sr = kokoro.create(to_phonemes(text, english), voice=VOICE, speed=SPEED,
+                                is_phonemes=True)
     assert sr == SR
     return samples.astype(np.float32)
 
