@@ -1,0 +1,71 @@
+name: Make YouTube Short
+on:
+  # Runs right after each morning's blog post.
+  workflow_run:
+    workflows: ["Publish next episode"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode to turn into a Short, for example 001. Leave empty for the latest published one."
+        required: false
+      rebuild:
+        description: "Replace the Short if it already exists"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+jobs:
+  short:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Pick episode
+        id: pick
+        run: |
+          EP="${{ inputs.episode }}"
+          if [ -z "$EP" ]; then EP=$(python -c "import json;print(json.load(open('published.json'))[-1])"); fi
+          echo "ep=$EP" >> "$GITHUB_OUTPUT"
+          if gh release view "short-$EP" >/dev/null 2>&1; then
+            if [ "${{ inputs.rebuild }}" = "true" ]; then gh release delete "short-$EP" --yes --cleanup-tag; echo "skip=no" >> "$GITHUB_OUTPUT";
+            else echo "Short for $EP already exists."; echo "skip=yes" >> "$GITHUB_OUTPUT"; fi
+          else echo "skip=no" >> "$GITHUB_OUTPUT"; fi
+      - name: Install tools
+        if: steps.pick.outputs.skip == 'no'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-inter fonts-dejavu-core
+          pip install -q kokoro-onnx soundfile pillow numpy
+      - name: Cache voice model
+        if: steps.pick.outputs.skip == 'no'
+        uses: actions/cache@v4
+        with:
+          path: .kokoro
+          key: kokoro-v1.0-int8
+      - name: Build Short
+        if: steps.pick.outputs.skip == 'no'
+        run: python tools/short.py ${{ steps.pick.outputs.ep }} shorts
+      - name: Publish as a GitHub release (download link for phone upload)
+        if: steps.pick.outputs.skip == 'no'
+        run: |
+          EP=${{ steps.pick.outputs.ep }}
+          python - <<PY > notes.md
+          import json; m = json.load(open("shorts/$EP.json"))
+          print("**Title** (copy into YouTube)\n\n" + m["title"] + "\n\n**Description**\n\n" + m["description"])
+          PY
+          gh release create "short-$EP" "shorts/$EP.mp4" "shorts/$EP.json" \
+            --title "Short $EP: $(python -c "import json;print(json.load(open('shorts/$EP.json'))['title'])")" \
+            --notes-file notes.md
+      - name: Upload to YouTube (only once the YouTube secret is saved)
+        if: steps.pick.outputs.skip == 'no'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: |
+          if [ -z "$YOUTUBE_REFRESH_TOKEN" ]; then echo "No YouTube secret yet. Upload by hand from the release."; exit 0; fi
+          python tools/youtube_upload.py ${{ steps.pick.outputs.ep }} shorts
