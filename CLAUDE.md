@@ -56,7 +56,8 @@ Copy the field layout from `episodes/003/episode.json`.
 ## YouTube Shorts
 
 - `tools/short.py NNN shorts` turns an episode into a 1080x1920 Short: hook line, the 7 pictures with captions and narration, then the value card. Narration uses the free Kokoro voice (`af_heart`), with a quiet tanpura drone made in code.
+- Each Short description opens with a one line hook from `tools/short_hooks.json`. Add one for each new episode.
 - Indian and Sanskrit words are spoken from the Indian (Sanskrit form) sounds in `tools/pronounce.py`. When an episode introduces a new name or Sanskrit word, add it there in the same commit. Screen text keeps the normal spelling.
-- `.github/workflows/shorts.yml` runs after each morning post and attaches the video plus a ready title and description to a GitHub release named `short-NNN`.
+- `.github/workflows/shorts.yml` is a separate job from Blogger publishing: it runs at 12:37 Malaysia time, only reads `published.json`, never commits, and attaches the video plus a ready title and description to a GitHub release named `short-NNN`.
 - Uploads to YouTube happen automatically only once the `YOUTUBE_REFRESH_TOKEN` secret exists and the Google project has passed YouTube's API audit. Until then the owner uploads from the release.
 - Shorts are marked not made for kids (family audience) and declare synthetic media.

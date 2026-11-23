@@ -165,13 +165,16 @@ def metadata(ep, seconds):
     if len(title) > 90:
         title = f"{ep['title']} | {book} Ep {ep['number']}"
     title += " #shorts"
+    hooks = json.loads((ROOT / "tools" / "short_hooks.json").read_text())
+    hook = hooks.get(f"{ep['number']:03d}", f"Episode {ep['number']} of the {book} for kids: {ep['title']}.")
     desc = "\n\n".join([
+        hook,
         f"{book}, Episode {ep['number']}: {ep['title']}",
         f"Value of the day: {ep['value_name']} ({ep['value_meaning']})",
         ep["lesson"],
         f"Talk about it: {ep['question']}",
         f"Read the full illustrated episode: https://{BLOG}/",
-        f"Next episode: {ep['next']}",
+        f"Next episode: {ep['next']}\nSubscribe for a new episode every day.",
         f"#{book} #KidsStories #HinduStories #MoralStories #BedtimeStories #IndianMythology #shorts",
     ])
     tags = [book, f"{book} for kids", "Hindu stories for kids", "moral stories", "kids stories",
