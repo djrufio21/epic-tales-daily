@@ -78,9 +78,9 @@ def narrate(kokoro, text):
     return samples.astype(np.float32)
 
 
-def tanpura(seconds):
+def tanpura(n):
     """A quiet four string drone (Pa Sa Sa Sa), plucked every 2.4 seconds."""
-    n = int(seconds * SR)
+    seconds = n / SR
     out = np.zeros(n, np.float32)
     sa = 130.81  # C3
     strings = [sa * 1.5 / 2, sa, sa, sa / 2]
@@ -112,7 +112,10 @@ def scene_frames(ep, pic, caption, n):
     """Yield n frames: the picture slowly zooms while the caption sits below."""
     base = frame_base(ep)
     d = ImageDraw.Draw(base)
-    text_block(d, caption, font(54), 1345, width=950)
+    size = 54  # shrink long captions so they never run into the footer
+    while size > 40 and len(wrap(d, caption, font(size), 950)) > 5:
+        size -= 4
+    text_block(d, caption, font(size), 1345, width=950)
     pw, ph = pic.size  # 1080 x 940
     top = PIC_BOX[1]
     for i in range(n):
@@ -203,7 +206,7 @@ def build(num, out_dir):
 
     voice = np.concatenate(clips)
     seconds = len(voice) / SR
-    mix = voice + tanpura(seconds)
+    mix = voice + tanpura(len(voice))
     mix = mix / max(1.0, np.abs(mix).max() / 0.95)
     wav = out_dir / f"{num}.wav"
     sf.write(wav, mix, SR)
