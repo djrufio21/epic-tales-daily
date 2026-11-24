@@ -468,6 +468,14 @@ def bg_field():
     g+=tree(70,400,70,"#5b9a45")
     return g
 
+# ---- Added in Episode 11 ----
+# Princess Sita of Mithila, Janaka's daughter: deep pink robe with a soft pink drape and gold trim.
+SITA=dict(robe="#c2185b",drape="#f8bbd0",trim="#f1c40f",skin="#d9a066",female=True,tiara=True)
+# Royal messengers who carry a king's message to another kingdom.
+MESSENGER=dict(robe="#7d6608",trim="#f4d03f",skin="#c68642",beard="#2b1b12",beardlen=0)
+# King Dasharatha's ministers at the court of Ayodhya.
+MINISTER=dict(robe="#566573",drape="#aab7b8",trim="#f4d03f",beard="#2b1b12",beardlen=20)
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""

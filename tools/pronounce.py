@@ -32,6 +32,7 @@ IPA = {
     "Vasishtha": "ʋəsˈɪʂʈʰə", "Vishvamitra": "ʋɪʃʋaːmˈɪtɾə", "Gautama": "ɡˈɔːtəmə",
     "Ahalya": "əhˈʌljaː", "Shatananda": "ʃətaːnˈʌndə", "Kapila": "kˈʌpɪlə",
     "Valmiki": "ʋaːlmˈiːkiː", "Vyasa": "ʋjˈaːsə", "Parashurama": "pəɾəʃʊɾˈaːmə",
+    "Vamadeva": "ʋaːmədˈeːʋə",
     # Kings of old
     "Sagara": "sˈʌɡəɾə", "Bhagiratha": "bʰəɡˈiːɾətʰə", "Devarata": "deːʋəɾˈaːtə",
     # Gods and divine beings
