@@ -18,7 +18,7 @@ tok = json.load(urllib.request.urlopen("https://oauth2.googleapis.com/token", ur
     "refresh_token": os.environ["YOUTUBE_REFRESH_TOKEN"], "grant_type": "refresh_token"}).encode()))["access_token"]
 
 body = json.dumps({
-    "snippet": {"title": meta["title"], "description": meta["description"], "tags": meta["tags"],
+    "snippet": {"title": (os.environ.get("YOUTUBE_TITLE_PREFIX", "") + meta["title"])[:100], "description": meta["description"], "tags": meta["tags"],
                 "categoryId": meta["categoryId"], "defaultLanguage": "en"},
     "status": {"privacyStatus": os.environ.get("YOUTUBE_PRIVACY", "public"),
                "selfDeclaredMadeForKids": meta["madeForKids"], "containsSyntheticMedia": True},

@@ -14,6 +14,10 @@ on:
         description: "Replace the Short if it already exists"
         type: boolean
         default: false
+      test_upload:
+        description: "Audit test: build this episode and upload it to YouTube as PRIVATE (no release)"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -34,6 +38,8 @@ jobs:
           EP="${{ inputs.episode }}"
           if [ -z "$EP" ]; then EP=$(python -c "import json;print(json.load(open('published.json'))[-1])"); fi
           echo "ep=$EP" >> "$GITHUB_OUTPUT"
+          if [ "${{ inputs.test_upload }}" = "true" ]; then echo "skip=no" >> "$GITHUB_OUTPUT"; echo "test=yes" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "test=no" >> "$GITHUB_OUTPUT"
           if gh release view "short-$EP" >/dev/null 2>&1; then
             if [ "${{ inputs.rebuild }}" = "true" ]; then gh release delete "short-$EP" --yes --cleanup-tag; echo "skip=no" >> "$GITHUB_OUTPUT";
             else echo "Short for $EP already exists."; echo "skip=yes" >> "$GITHUB_OUTPUT"; fi
@@ -53,7 +59,7 @@ jobs:
         if: steps.pick.outputs.skip == 'no'
         run: python tools/short.py ${{ steps.pick.outputs.ep }} shorts
       - name: Publish as a GitHub release (download link for phone upload)
-        if: steps.pick.outputs.skip == 'no'
+        if: steps.pick.outputs.skip == 'no' && steps.pick.outputs.test == 'no'
         run: |
           EP=${{ steps.pick.outputs.ep }}
           python - <<PY > notes.md
@@ -63,12 +69,15 @@ jobs:
           gh release create "short-$EP" "shorts/$EP.mp4" "shorts/$EP.json" \
             --title "Short $EP: $(python -c "import json;print(json.load(open('shorts/$EP.json'))['title'])")" \
             --notes-file notes.md
-      - name: Upload to YouTube (only once the YouTube secret is saved)
-        if: steps.pick.outputs.skip == 'no'
+      # Daily uploads stay off until the repo variable YOUTUBE_AUTO is set to true
+      # (after the audit passes). The test upload is always private.
+      - name: Upload to YouTube
+        if: steps.pick.outputs.skip == 'no' && (steps.pick.outputs.test == 'yes' || vars.YOUTUBE_AUTO == 'true')
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
         run: |
           if [ -z "$YOUTUBE_REFRESH_TOKEN" ]; then echo "No YouTube secret yet. Upload by hand from the release."; exit 0; fi
+          if [ "${{ steps.pick.outputs.test }}" = "yes" ]; then export YOUTUBE_PRIVACY=private YOUTUBE_TITLE_PREFIX="[API test] "; fi
           python tools/youtube_upload.py ${{ steps.pick.outputs.ep }} shorts

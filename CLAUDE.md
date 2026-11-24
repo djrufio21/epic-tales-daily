@@ -59,5 +59,5 @@ Copy the field layout from `episodes/003/episode.json`.
 - Each Short description opens with a one line hook from `tools/short_hooks.json`. Add one for each new episode.
 - Indian and Sanskrit words are spoken from the Indian (Sanskrit form) sounds in `tools/pronounce.py`. When an episode introduces a new name or Sanskrit word, add it there in the same commit. Screen text keeps the normal spelling.
 - `.github/workflows/shorts.yml` is a separate job from Blogger publishing: it runs at 12:37 Malaysia time, only reads `published.json`, never commits, and attaches the video plus a ready title and description to a GitHub release named `short-NNN`.
-- Uploads to YouTube happen automatically only once the `YOUTUBE_REFRESH_TOKEN` secret exists and the Google project has passed YouTube's API audit. Until then the owner uploads from the release.
+- Daily uploads to YouTube run only when the `YOUTUBE_REFRESH_TOKEN` secret exists AND the repo variable `YOUTUBE_AUTO` is `true` (set it only after the YouTube API audit passes). Until then the owner uploads from the release. The `test_upload` option uploads one episode as private, for the audit screencast.
 - Shorts are marked not made for kids (family audience) and declare synthetic media.
