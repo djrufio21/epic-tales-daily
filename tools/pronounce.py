@@ -22,7 +22,7 @@ IPA = {
     "Ramayana": "ɾaːmˈaːjəɳə", "Mahabharata": "məhaːbʰˈaːɾətə", "Sanskrit": "sˈʌnskɾɪt",
     "Ayodhya": "əjˈoːdʰjaː", "Sarayu": "sˈʌɾəjuː", "Mithila": "mˈɪtʰɪlaː", "Ganga": "ɡˈʌŋɡaː",
     "Himalaya": "hɪmˈaːləjə", "Vishala": "ʋɪʃˈaːlaː", "Siddhashrama": "sˈɪddʰaːʃɾəmə",
-    "Bhagirathi": "bʰəɡˈiːɾətʰiː", "Kanda": "kˈaːɳɖə", "Lanka": "lˈʌŋkaː",
+    "Bhagirathi": "bʰəɡˈiːɾətʰiː", "Sankashya": "sˈaːŋkaːʃjə", "Kanda": "kˈaːɳɖə", "Lanka": "lˈʌŋkaː",
     # Royal family
     "Dasharatha": "dˈʌʃəɾətʰə", "Kausalya": "kˈɔːsəljaː", "Kaikeyi": "kˈɛːkeːjiː",
     "Sumitra": "sʊmˈɪtɾaː", "Rama": "ɾˈaːmə", "Lakshmana": "lˈʌkʃməɳə", "Bharata": "bʰˈʌɾətə",
@@ -53,7 +53,7 @@ IPA = {
     "astra": "ˈʌstɾə", "astras": "ˈʌstɾəz", "deva": "dˈeːʋə", "devas": "dˈeːʋəz",
     "mantra": "mˈʌntɾə", "mantras": "mˈʌntɾəz", "rakshasa": "ɾˈaːkʃəsə",
     "rakshasas": "ɾˈaːkʃəsəz", "rakshasi": "ɾˈaːkʃəsiː", "rishi": "ɾˈɪʃiː",
-    "rishis": "ɾˈɪʃiːz", "tapas": "tˈʌpəs", "yajna": "jˈʌɡjə", "puja": "pˈuːʤaː",
+    "rishis": "ɾˈɪʃiːz", "brahmana": "bɾˈaːhməɳə", "brahmanas": "bɾˈaːhməɳəz", "tapas": "tˈʌpəs", "yajna": "jˈʌɡjə", "puja": "pˈuːʤaː",
 }
 # Lower case forms (dharma, seva, shraddha...) say the same as capitalised ones.
 IPA.update({k.lower(): v for k, v in list(IPA.items()) if k.lower() not in IPA})

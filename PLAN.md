@@ -15,7 +15,7 @@ Drawn episodes are marked done. The rest is a plan and can be adjusted.
 | 9 | The City of Mithila | Atithi seva (honouring a guest) | Done |
 | 10 | The Great Bow of Shiva | Dhairya (steady courage) | Done |
 | 11 | Rama and Sita | Mangala (starting well, with blessings) | Done |
-| 12 | Four Weddings in Mithila | Kutumba (love of family) | To draw |
+| 12 | Four Weddings in Mithila | Kutumba (love of family) | Done |
 | 13 | Parashurama's Challenge | Shanti (staying calm) | To draw |
 | 14 | Home to Ayodhya | Seva (serving parents and elders) | To draw |
 

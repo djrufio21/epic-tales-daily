@@ -476,6 +476,28 @@ MESSENGER=dict(robe="#7d6608",trim="#f4d03f",skin="#c68642",beard="#2b1b12",bear
 # King Dasharatha's ministers at the court of Ayodhya.
 MINISTER=dict(robe="#566573",drape="#aab7b8",trim="#f4d03f",beard="#2b1b12",beardlen=20)
 
+# ---- Added in Episode 12 ----
+# King Kushadhvaja of Sankashya, Janaka's younger brother: cream robe with a teal drape and a brown beard.
+KUSHADHVAJA=dict(robe="#fdebd0",drape="#48c9b0",trim="#d4ac0d",beard="#5d4037",beardlen=30,crown=True)
+# Urmila, Janaka's younger daughter, who married Lakshmana.
+URMILA=dict(robe="#d35400",drape="#f5cba7",trim="#f1c40f",skin="#d9a066",female=True,tiara=True)
+# Mandavi and Shrutakirti, Kushadhvaja's daughters, who married Bharata and Shatrughna.
+MANDAVI=dict(robe="#117864",drape="#a3e4d7",trim="#f1c40f",female=True,tiara=True)
+SHRUTAKIRTI=dict(robe="#2471a3",drape="#aed6f1",trim="#f1c40f",female=True,tiara=True)
+def cow(x,y,s=1,flip=False,c="#fdfefe",horns="#f1c40f"):
+    """A gentle white cow with a hump and gold covered horns, standing side on and facing right (flip=True faces left). (x,y) is the middle of its body."""
+    g=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})">'
+    for lx in (-50,-30,34,54): g+=f'<rect x="{lx-7}" y="10" width="14" height="62" rx="6" fill="{c}" stroke="#a6acaf" stroke-width="2"/><rect x="{lx-8}" y="66" width="16" height="9" fill="#5d4037"/>'
+    g+=f'<path d="M-76,-14 Q-100,20 -92,52" stroke="#a6acaf" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="-92" cy="56" r="7" fill="#5d4037"/>'
+    g+=f'<ellipse cx="0" cy="0" rx="78" ry="38" fill="{c}" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<path d="M30,-34 Q46,-62 64,-34 Z" fill="{c}" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<path d="M60,-6 Q70,30 94,22 L92,-10 Z" fill="#ecf0f1" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<path d="M80,-12 Q112,-40 120,-18 L120,14 Q110,28 96,18 Z" fill="{c}" stroke="#a6acaf" stroke-width="2"/>'
+    g+=f'<path d="M96,-28 Q88,-56 100,-64" stroke="{horns}" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M110,-30 Q114,-58 128,-62" stroke="{horns}" stroke-width="7" fill="none" stroke-linecap="round"/>'
+    g+='<ellipse cx="86" cy="-20" rx="12" ry="6" fill="#d5d8dc"/><circle cx="110" cy="-14" r="4.5" fill="#2b1b12"/><ellipse cx="118" cy="10" rx="6" ry="5" fill="#f5b7b1"/>'
+    g+='<path d="M60,-30 Q74,-6 62,14" stroke="#c0392b" stroke-width="6" fill="none"/><circle cx="64" cy="18" r="7" fill="#f1c40f"/>'
+    return g+'</g>'
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""
