@@ -35,6 +35,7 @@ def person(x,y,s=1,robe="#1f618d",skin="#c68642",trim="#f1c40f",hair="#2b1b12",c
     g+='<circle cx="-21" cy="-29" r="6" fill="#e57373" opacity="0.35"/><circle cx="21" cy="-29" r="6" fill="#e57373" opacity="0.35"/>'
     if eyes: g+='<circle cx="-12" cy="-40" r="4" fill="#2b1b12"/><circle cx="12" cy="-40" r="4" fill="#2b1b12"/>'
     if mood=="sad": g+='<path d="M-9,-20 Q0,-28 9,-20" stroke="#2b1b12" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-19,-48 L-7,-53 M7,-53 L19,-48" stroke="#2b1b12" stroke-width="3" stroke-linecap="round"/>'
+    elif mood=="stern": g+='<path d="M-9,-22 L9,-22" stroke="#2b1b12" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-20,-53 L-7,-47 M7,-47 L20,-53" stroke="#2b1b12" stroke-width="3.5" stroke-linecap="round"/>'
     else: g+='<path d="M-9,-26 Q0,-17 9,-26" stroke="#2b1b12" stroke-width="3" fill="none" stroke-linecap="round"/>'
     return g+'</g>'
 
@@ -497,6 +498,70 @@ def cow(x,y,s=1,flip=False,c="#fdfefe",horns="#f1c40f"):
     g+='<ellipse cx="86" cy="-20" rx="12" ry="6" fill="#d5d8dc"/><circle cx="110" cy="-14" r="4.5" fill="#2b1b12"/><ellipse cx="118" cy="10" rx="6" ry="5" fill="#f5b7b1"/>'
     g+='<path d="M60,-30 Q74,-6 62,14" stroke="#c0392b" stroke-width="6" fill="none"/><circle cx="64" cy="18" r="7" fill="#f1c40f"/>'
     return g+'</g>'
+
+# ---- Added in Episode 13 ----
+# (person() also gained mood="stern": a straight mouth and firm brows, for a fierce but dignified face.)
+# Sage Parashurama, son of Jamadagni: deerskin tan robe with a rust drape, black matted locks and beard.
+# He is honoured as an avatar of Lord Vishnu. Draw him with parashurama(), never only person().
+PARASHURAMA=dict(robe="#a9744f",drape="#ba4a00",trim="#6e2c00",hair="#1c1c1c",beard="#1c1c1c",beardlen=55,topknot=True)
+def parashu(x,y,s=1,angle=0):
+    """Parashurama's axe: a long wooden handle with a broad steel blade. (x,y) is the foot of the handle; angle 0 stands it upright."""
+    g=f'<g transform="translate({x},{y}) rotate({angle}) scale({s})">'
+    g+='<line x1="0" y1="0" x2="0" y2="-190" stroke="#6e3b14" stroke-width="10" stroke-linecap="round"/>'
+    g+='<path d="M4,-186 Q50,-200 62,-158 Q48,-138 4,-142 Z" fill="#aab7b8" stroke="#566573" stroke-width="3"/><path d="M58,-188 Q72,-160 58,-132" stroke="#fdfefe" stroke-width="3" fill="none"/>'
+    g+='<rect x="-7" y="-196" width="14" height="22" rx="3" fill="#d4ac0d"/>'
+    return g+'</g>'
+def parashurama(x,y,s=1,arms="down",mood="stern",flip=False,axe=True):
+    """Sage Parashurama with his tall jata and his axe resting on his shoulder. Always shown with dignity."""
+    g=person(x,y,s,arms=arms,mood=mood,flip=flip,**PARASHURAMA)
+    g+=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})"><ellipse cx="0" cy="-92" rx="17" ry="24" fill="#1c1c1c"/><path d="M-10,-104 Q0,-114 10,-104" stroke="#5d4037" stroke-width="3" fill="none"/>'
+    g+='<path d="M-20,2 Q0,40 20,2" stroke="#7b241c" stroke-width="5" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/>'
+    if axe: g+=f'<g transform="scale(-1,1)">{parashu(50,72,1,angle=8)}</g>'
+    return g+'</g>'
+def vishnu_bow(x,y,s=1,angle=0,strung=True,arrowed=False):
+    """The divine bow of Lord Vishnu: deep blue wood bound with gold, about 340 long at s=1. (x,y) is its grip; angle 0 stands it upright with the curve to the right.
+    arrowed=True fits a golden arrow on the string, pointing the way the curve faces."""
+    def half(sign):
+        p=f'<path d="M0,{sign*12} Q55,{sign*90} 0,{sign*170}" stroke="#1a5276" stroke-width="14" fill="none" stroke-linecap="round"/>'
+        p+=f'<path d="M0,{sign*12} Q55,{sign*90} 0,{sign*170}" stroke="#f4d03f" stroke-width="4" stroke-dasharray="10 16" fill="none"/>'
+        return p+f'<circle cx="0" cy="{sign*174}" r="10" fill="#f1c40f" stroke="#9a7d0a" stroke-width="3"/>'
+    g=f'<g transform="translate({x},{y}) rotate({angle}) scale({s})">'
+    if arrowed:
+        g+='<path d="M-60,0 L0,-160 M-60,0 L0,160" stroke="#fffaf0" stroke-width="3"/>'
+    elif strung: g+='<line x1="0" y1="-174" x2="0" y2="174" stroke="#fffaf0" stroke-width="3"/>'
+    g+=half(-1)+half(1)+'<rect x="-6" y="-20" width="24" height="40" rx="8" fill="#f1c40f" stroke="#9a7d0a" stroke-width="3"/>'
+    if arrowed:
+        g+='<circle cx="120" cy="0" r="40" fill="url(#glow)"/><line x1="-60" y1="0" x2="130" y2="0" stroke="#d4ac0d" stroke-width="7" stroke-linecap="round"/>'
+        g+='<polygon points="160,0 126,-14 126,14" fill="#f1c40f" stroke="#b7950b" stroke-width="2"/><path d="M-60,0 L-80,-14 L-70,0 L-80,14 Z" fill="#f39c12"/>'
+    return g+'</g>'
+def bird(x,y,s=1,flip=False,c="#2c3e50",crying=False):
+    """A dark bird flying, facing right (flip=True faces left). crying=True opens its beak to call out."""
+    g=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})">'
+    g+=f'<path d="M-6,-4 Q-30,-40 -60,-34 Q-36,-20 -18,4 Z" fill="{c}"/><path d="M6,-4 Q-4,-44 26,-56 Q20,-24 14,4 Z" fill="{c}"/>'
+    g+=f'<ellipse cx="0" cy="2" rx="30" ry="12" fill="{c}"/><circle cx="30" cy="-4" r="10" fill="{c}"/><polygon points="-30,0 -48,-8 -46,12" fill="{c}"/><circle cx="33" cy="-7" r="2.5" fill="#fdfefe"/>'
+    g+=('<polygon points="38,-8 54,-14 40,-3" fill="#f39c12"/><polygon points="38,-1 52,6 38,2" fill="#f39c12"/>' if crying else '<polygon points="38,-6 52,-2 38,1" fill="#f39c12"/>')
+    return g+'</g>'
+def deer(x,y,s=1,flip=False):
+    """A gentle spotted deer walking calmly, facing right (flip=True faces left). (x,y) is the middle of its body."""
+    g=f'<g transform="translate({x},{y}) scale({-s if flip else s},{s})">'
+    for lx,a in ((-40,6),(-26,-6),(30,6),(44,-6)): g+=f'<line x1="{lx}" y1="10" x2="{lx+a}" y2="78" stroke="#b9770e" stroke-width="9" stroke-linecap="round"/>'
+    g+='<path d="M-58,-10 Q-74,-24 -66,-34" stroke="#b9770e" stroke-width="8" fill="none" stroke-linecap="round"/>'
+    g+='<ellipse cx="0" cy="0" rx="62" ry="28" fill="#d68910"/><path d="M-40,14 Q0,30 40,14" stroke="#fdebd0" stroke-width="6" fill="none"/>'
+    for sx,sy in ((-30,-8),(-10,-14),(10,-6),(28,-14),(-18,6),(20,8)): g+=f'<circle cx="{sx}" cy="{sy}" r="4" fill="#fdebd0"/>'
+    g+='<path d="M40,-14 L62,-62 L80,-56 L62,-6 Z" fill="#d68910"/><ellipse cx="80" cy="-64" rx="22" ry="13" fill="#d68910"/>'
+    g+='<path d="M66,-74 L58,-108 M62,-92 L48,-100 M78,-76 L82,-110 M80,-96 L94,-104" stroke="#7a4a1c" stroke-width="4" stroke-linecap="round"/>'
+    g+='<ellipse cx="64" cy="-78" rx="5" ry="10" fill="#b9770e" transform="rotate(-30,64,-78)"/><circle cx="84" cy="-68" r="3.5" fill="#2b1b12"/><circle cx="100" cy="-62" r="3.5" fill="#2b1b12"/>'
+    return g+'</g>'
+def bg_storm():
+    """The road home under a sudden storm: a dark sky, a dim sun hidden by dust, and trees bent by the wind."""
+    g='<rect width="1000" height="860" fill="#4d4660"/><circle cx="500" cy="300" r="90" fill="#d5c4a1" opacity="0.35"/>'
+    g+='<path d="M0,470 Q180,380 380,450 Q520,390 700,440 Q860,380 1000,460 L1000,860 L0,860 Z" fill="#6d6455"/>'
+    g+='<path d="M0,560 Q250,520 500,550 T1000,540 L1000,860 L0,860 Z" fill="#5f7350"/><polygon points="470,548 530,548 760,860 240,860" fill="#a8977a"/>'
+    for tx,ty in ((90,420),(900,430)):
+        g+=f'<path d="M{tx},{ty+150} Q{tx+10},{ty+60} {tx+40},{ty}" stroke="#4a3520" stroke-width="20" fill="none" stroke-linecap="round"/>'
+        g+=f'<ellipse cx="{tx+70}" cy="{ty-10}" rx="80" ry="48" fill="#3f5a36"/><ellipse cx="{tx+130}" cy="{ty+10}" rx="44" ry="26" fill="#3f5a36"/>'
+    g+=dust(240,250,90)+dust(760,220,100)+dust(500,120,70)
+    return g
 
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):

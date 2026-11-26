@@ -22,7 +22,7 @@ IPA = {
     "Ramayana": "ɾaːmˈaːjəɳə", "Mahabharata": "məhaːbʰˈaːɾətə", "Sanskrit": "sˈʌnskɾɪt",
     "Ayodhya": "əjˈoːdʰjaː", "Sarayu": "sˈʌɾəjuː", "Mithila": "mˈɪtʰɪlaː", "Ganga": "ɡˈʌŋɡaː",
     "Himalaya": "hɪmˈaːləjə", "Vishala": "ʋɪʃˈaːlaː", "Siddhashrama": "sˈɪddʰaːʃɾəmə",
-    "Bhagirathi": "bʰəɡˈiːɾətʰiː", "Sankashya": "sˈaːŋkaːʃjə", "Kanda": "kˈaːɳɖə", "Lanka": "lˈʌŋkaː",
+    "Bhagirathi": "bʰəɡˈiːɾətʰiː", "Mahendra": "məhˈeːndɾə", "Sankashya": "sˈaːŋkaːʃjə", "Kanda": "kˈaːɳɖə", "Lanka": "lˈʌŋkaː",
     # Royal family
     "Dasharatha": "dˈʌʃəɾətʰə", "Kausalya": "kˈɔːsəljaː", "Kaikeyi": "kˈɛːkeːjiː",
     "Sumitra": "sʊmˈɪtɾaː", "Rama": "ɾˈaːmə", "Lakshmana": "lˈʌkʃməɳə", "Bharata": "bʰˈʌɾətə",
@@ -32,7 +32,7 @@ IPA = {
     "Vasishtha": "ʋəsˈɪʂʈʰə", "Vishvamitra": "ʋɪʃʋaːmˈɪtɾə", "Gautama": "ɡˈɔːtəmə",
     "Ahalya": "əhˈʌljaː", "Shatananda": "ʃətaːnˈʌndə", "Kapila": "kˈʌpɪlə",
     "Valmiki": "ʋaːlmˈiːkiː", "Vyasa": "ʋjˈaːsə", "Parashurama": "pəɾəʃʊɾˈaːmə",
-    "Vamadeva": "ʋaːmədˈeːʋə",
+    "Vamadeva": "ʋaːmədˈeːʋə", "Jamadagni": "ʤəmˈʌdəɡnɪ",
     # Kings of old
     "Sagara": "sˈʌɡəɾə", "Bhagiratha": "bʰəɡˈiːɾətʰə", "Devarata": "deːʋəɾˈaːtə",
     # Gods and divine beings
