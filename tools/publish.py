@@ -53,15 +53,75 @@ def build_html(d, ep):
         )
         if i < len(ep["captions"]):
             parts.append(f"<p>{html.escape(cap)}</p>")
+    if ep.get("story"):
+        parts.append("<h3>The story in full</h3>")
+        parts += [f"<p>{html.escape(t)}</p>" for t in ep["story"]]
     if ep.get("value_name"):
         parts.append(f"<h3>Today's value: {html.escape(ep['value_name'])} ({html.escape(ep['value_meaning'])})</h3>")
-        parts.append(f"<p>{html.escape(ep['lesson'])}</p>")
-        parts.append(f"<p><strong>Talk about it:</strong> {html.escape(ep['question'])}</p>")
+        parts += [f"<p>{html.escape(t)}</p>" for t in (ep.get("lesson_long") or [ep["lesson"]])]
     else:
         parts.append(f"<h3>Today's takeaway</h3><p>{html.escape(ep['takeaway'])}</p>")
+    if ep.get("tradition"):
+        parts.append("<h3>In our tradition</h3>")
+        parts += [f"<p>{html.escape(t)}</p>" for t in ep["tradition"]]
+    if ep.get("words"):
+        parts.append("<h3>Words to know</h3><ul>" + "".join(
+            f"<li><strong>{html.escape(w)}</strong>: {html.escape(m)}</li>" for w, m in ep["words"]) + "</ul>")
+    if ep.get("questions"):
+        parts.append("<h3>Talk about it</h3><ol>" + "".join(f"<li>{html.escape(q)}</li>" for q in ep["questions"]) + "</ol>")
+    elif ep.get("question"):
+        parts.append(f"<p><strong>Talk about it:</strong> {html.escape(ep['question'])}</p>")
     if ep.get("next"):
         parts.append(f"<p><em>Next episode: {html.escape(ep['next'])}</em></p>")
     return "\n".join(parts)
+
+
+def expand(spec, done):
+    """Turn "002", "001,003", "001-012" or "all" into a list of episode folders."""
+    if spec.strip().lower() == "all":
+        return list(done)
+    out = []
+    for part in spec.replace(" ", ",").split(","):
+        if not part:
+            continue
+        if "-" in part:
+            a, b = part.split("-", 1)
+            out += [f"{n:03d}" for n in range(int(a), int(b) + 1)]
+        else:
+            out.append(f"{int(part):03d}")
+    return out
+
+
+def refresh(names):
+    """Refresh the content of episodes that are already live."""
+    if os.environ.get("DRY_RUN"):
+        for name in names:
+            d = ROOT / "episodes" / name
+            ep = json.loads((d / "episode.json").read_text())
+            print(title_of(ep)); print(build_html(d, ep))
+        return 0
+    auth = {"Authorization": f"Bearer {access_token()}"}
+    api = "https://www.googleapis.com/blogger/v3/blogs"
+    blog = call(f"{api}/byurl?url=" + urllib.parse.quote(BLOG_URL, safe=""), headers=auth)["id"]
+    jhead = {**auth, "Content-Type": "application/json"}
+    items, page = [], ""
+    while True:
+        res = call(f"{api}/{blog}/posts?maxResults=50&fetchBodies=false" + (f"&pageToken={page}" if page else ""), headers=auth)
+        items += res.get("items", [])
+        page = res.get("nextPageToken")
+        if not page:
+            break
+    failed = 0
+    for name in names:
+        d = ROOT / "episodes" / name
+        ep = json.loads((d / "episode.json").read_text())
+        title = title_of(ep)
+        match = [it for it in items if it["title"] == title]
+        if not match:
+            print("No live post found with title:", title); failed += 1; continue
+        out = call(f"{api}/{blog}/posts/{match[0]['id']}", json.dumps({"content": build_html(d, ep)}).encode(), jhead, "PATCH")
+        print("Updated:", out.get("url"))
+    return 1 if failed else 0
 
 
 def title_of(ep):
@@ -75,7 +135,9 @@ def main():
     if not update and os.environ.get("EVENT_NAME") == "schedule" and LAST.exists() and LAST.read_text().strip() == today:
         print("An episode was already published today (Malaysia time). Nothing to do.")
         return 0
-    d = (ROOT / "episodes" / update) if update else next_episode(done)
+    if update:
+        return refresh(expand(update, done))
+    d = next_episode(done)
     if d is None:
         print("No unpublished episodes left. Nothing to do.")
         return 0
@@ -87,15 +149,6 @@ def main():
     api = "https://www.googleapis.com/blogger/v3/blogs"
     blog = call(f"{api}/byurl?url=" + urllib.parse.quote(BLOG_URL, safe=""), headers=auth)["id"]
     jhead = {**auth, "Content-Type": "application/json"}
-    if update:
-        # Refresh the content of an episode that is already live.
-        items = call(f"{api}/{blog}/posts?maxResults=100&fetchBodies=false", headers=auth).get("items", [])
-        match = [it for it in items if it["title"] == post["title"]]
-        if not match:
-            print("No live post found with title:", post["title"]); return 1
-        out = call(f"{api}/{blog}/posts/{match[0]['id']}", json.dumps({"content": post["content"]}).encode(), jhead, "PATCH")
-        print("Updated:", out.get("url"))
-        return 0
     out = call(f"{api}/{blog}/posts/", json.dumps(post).encode(), jhead)
     print("Published:", out.get("url"))
     done.append(d.name)

@@ -1,7 +1,7 @@
 # Epic Tales Daily: how every episode is made
 
 This repo publishes one illustrated episode a day to https://epictalesdaily.blogspot.com/.
-The owner approved the format on 17 November 2026. Every new episode must follow it exactly.
+The owner approved the format on 17 November 2026 and the longer written format on 27 November 2026 (after AdSense rejected the blog for low value content). Every new episode must follow it exactly.
 
 ## The fixed template
 
@@ -16,9 +16,17 @@ An episode always has:
 
 1. Exactly 7 scenes and 7 captions, telling one part of the story in order.
 2. A closing value: `value_name` (a Sanskrit value such as Shraddha, Vinaya, Satya, Dharma, Seva, Kshama, Karuna, Dhairya), `value_meaning` (a few plain words), `lesson` (3 or 4 sentences for the blog), `card_lesson` (2 or 3 sentences for the closing card) and `question` (a "Talk about it" question a parent can ask a child).
-3. `next`: the title of the following episode.
+3. The written article that goes under the pictures (this is what makes the blog worth reading on its own, and what AdSense and Google search look for). Aim for 550 to 700 words in total per episode:
+   - `story`: 5 paragraphs, about 200 to 250 words, retelling this episode in plain prose. Add only details that are in Valmiki (names, places, family links), never new events.
+   - `lesson_long`: 3 short paragraphs. First a one sentence meaning of the value, then how a character lived it in this episode, then one line of what our elders teach. Shown under "Today's value" in place of `lesson`.
+   - `tradition`: 2 paragraphs linking the episode to Hindu practice, scripture or festivals today (a verse, a ritual, a festival, a well known saying). Only facts you are sure of; if a detail comes from a later telling such as Tulsidas, say so.
+   - `words`: 5 or 6 pairs of [word, short plain meaning] for "Words to know".
+   - `questions`: 3 "Talk about it" questions. The first is the same as `question`.
+4. `next`: the title of the following episode.
 
-Copy the field layout from `episodes/003/episode.json`.
+Keep `lesson`, `question` and `card_lesson` as well: the closing card, the social pictures and the Shorts use them.
+
+Copy the field layout from `episodes/001/episode.json`.
 
 ## Output, and why there are two sets of pictures
 
@@ -46,7 +54,7 @@ Copy the field layout from `episodes/003/episode.json`.
 
 - `.github/workflows/publish.yml` runs every morning, with tries at 07:23, 08:41 and 10:17 Malaysia time, and posts at most one episode per day: it posts the lowest numbered episode not yet listed in `published.json`.
 - To publish now: run the workflow manually with the `update` box empty.
-- To refresh a post that is already live after changing its files: run the workflow with `update` set to the episode number, for example `002`.
+- To refresh posts that are already live after changing their files: run the workflow with `update` set to the episode numbers, for example `002`, `002,005`, `001-012` or `all`.
 - Never edit `published.json` by hand.
 
 ## Story order
