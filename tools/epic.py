@@ -563,6 +563,34 @@ def bg_storm():
     g+=dust(240,250,90)+dust(760,220,100)+dust(500,120,70)
     return g
 
+# ---- Added in Episode 14 ----
+# Prince Yudhajit of Kekaya, Queen Kaikeyi's brother and Bharata's uncle: dark red robe with an orange drape.
+YUDHAJIT=dict(robe="#922b21",drape="#e59866",trim="#f1c40f",beard="#2b1b12",beardlen=25,tiara=True)
+# The people of Ayodhya, cheering in the streets.
+CITIZEN=dict(robe="#2e86c1",trim="#f4d03f",skin="#c68642",beard="#2b1b12",beardlen=10)
+CITIZEN2=dict(robe="#af7ac5",drape="#f5b7b1",trim="#f4d03f",skin="#d9a066",female=True)
+def aarti(x,y,s=1):
+    """A brass aarti plate with a lit lamp, flowers and a little kumkum, held up to welcome someone. (x,y) is the middle of the plate."""
+    g=f'<g transform="translate({x},{y}) scale({s})"><circle cx="0" cy="-26" r="34" fill="url(#glow)"/>'
+    g+='<ellipse cx="0" cy="0" rx="44" ry="12" fill="#d4ac0d" stroke="#9a7d0a" stroke-width="3"/>'
+    g+='<path d="M-12,-4 Q0,8 12,-4 Z" fill="#b9770e"/><path d="M0,-6 Q-8,-18 0,-32 Q8,-18 0,-6 Z" fill="#f39c12"/><path d="M0,-8 Q-4,-15 0,-22 Q4,-15 0,-8 Z" fill="#f9e79f"/>'
+    g+='<circle cx="-28" cy="-3" r="6" fill="#e74c3c"/><circle cx="26" cy="-3" r="6" fill="#f1c40f"/><circle cx="-18" cy="2" r="4" fill="#c0392b"/>'
+    return g+'</g>'
+def bg_ayodhya(sky="url(#sunrise)"):
+    """The streets of Ayodhya decorated for a festival: the royal palace ahead, houses with flags on each side, and a road strewn with flowers."""
+    g=f'<rect width="1000" height="860" fill="{sky}"/><circle cx="500" cy="200" r="160" fill="url(#glow)"/>'
+    g+=palace(164,112,1.2)
+    for hx,hw,c in ((-20,200,"#e8a33d"),(820,200,"#d9952f")):
+        g+=f'<rect x="{hx}" y="300" width="{hw}" height="360" fill="{c}"/><polygon points="{hx-10},300 {hx+hw/2:.0f},230 {hx+hw+10},300" fill="#c9812a"/>'
+        g+=f'<line x1="{hx+hw/2:.0f}" y1="232" x2="{hx+hw/2:.0f}" y2="170" stroke="#7a4a1c" stroke-width="4"/><polygon points="{hx+hw/2:.0f},170 {hx+hw/2+40:.0f},182 {hx+hw/2:.0f},194" fill="#c0392b"/>'
+        for wy in (350,450): g+=f'<rect x="{hx+40}" y="{wy}" width="30" height="50" rx="15" fill="#7a4a1c"/><rect x="{hx+hw-70}" y="{wy}" width="30" height="50" rx="15" fill="#7a4a1c"/>'
+    g+=bunting(110,30)
+    g+='<rect y="640" width="1000" height="220" fill="#d8bc93"/><polygon points="420,640 580,640 760,860 240,860" fill="#e6cf9c"/>'
+    r=random.Random(14)
+    for _ in range(40):
+        fx,fy=r.randint(20,980),r.randint(660,850); g+=f'<circle cx="{fx}" cy="{fy}" r="{r.choice((5,6,7))}" fill="{r.choice(("#e74c3c","#f39c12","#f1c40f","#e84393"))}"/>'
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""

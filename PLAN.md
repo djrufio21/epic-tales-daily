@@ -17,7 +17,7 @@ Drawn episodes are marked done. The rest is a plan and can be adjusted.
 | 11 | Rama and Sita | Mangala (starting well, with blessings) | Done |
 | 12 | Four Weddings in Mithila | Kutumba (love of family) | Done |
 | 13 | Parashurama's Challenge | Shanti (staying calm) | Done |
-| 14 | Home to Ayodhya | Seva (serving parents and elders) | To draw |
+| 14 | Home to Ayodhya | Seva (serving parents and elders) | Done |
 
 ## Ayodhya Kanda
 

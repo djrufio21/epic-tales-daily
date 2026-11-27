@@ -23,11 +23,13 @@ IPA = {
     "Ayodhya": "əjˈoːdʰjaː", "Sarayu": "sˈʌɾəjuː", "Mithila": "mˈɪtʰɪlaː", "Ganga": "ɡˈʌŋɡaː",
     "Himalaya": "hɪmˈaːləjə", "Vishala": "ʋɪʃˈaːlaː", "Siddhashrama": "sˈɪddʰaːʃɾəmə",
     "Bhagirathi": "bʰəɡˈiːɾətʰiː", "Mahendra": "məhˈeːndɾə", "Sankashya": "sˈaːŋkaːʃjə", "Kanda": "kˈaːɳɖə", "Lanka": "lˈʌŋkaː",
+    "Kekaya": "kˈeːkəjə",
     # Royal family
     "Dasharatha": "dˈʌʃəɾətʰə", "Kausalya": "kˈɔːsəljaː", "Kaikeyi": "kˈɛːkeːjiː",
     "Sumitra": "sʊmˈɪtɾaː", "Rama": "ɾˈaːmə", "Lakshmana": "lˈʌkʃməɳə", "Bharata": "bʰˈʌɾətə",
     "Shatrughna": "ʃətɾˈʊɡʰnə", "Sita": "sˈiːtaː", "Janaka": "ʤˈʌnəkə", "Urmila": "ˈʊɾmɪlaː",
     "Mandavi": "mˈaːɳɖəʋiː", "Shrutakirti": "ʃɾʊtəkˈiːɾtiː", "Kushadhvaja": "kʊʃədʰʋˈʌʤə",
+    "Yudhajit": "jʊdʰaːʤˈɪt",
     # Sages and teachers
     "Vasishtha": "ʋəsˈɪʂʈʰə", "Vishvamitra": "ʋɪʃʋaːmˈɪtɾə", "Gautama": "ɡˈɔːtəmə",
     "Ahalya": "əhˈʌljaː", "Shatananda": "ʃətaːnˈʌndə", "Kapila": "kˈʌpɪlə",
@@ -37,7 +39,7 @@ IPA = {
     "Sagara": "sˈʌɡəɾə", "Bhagiratha": "bʰəɡˈiːɾətʰə", "Devarata": "deːʋəɾˈaːtə",
     # Gods and divine beings
     "Shiva": "ʃˈɪʋə", "Vishnu": "ʋˈɪʂɳʊ", "Brahma": "bɾˈʌhmaː", "Indra": "ˈɪndɾə",
-    "Vamana": "ʋˈaːmənə", "Hanuman": "hˈʌnʊmaːn", "Pinaka": "pɪnˈaːkə",
+    "Vamana": "ʋˈaːmənə", "Hanuman": "hˈʌnʊmaːn", "Pinaka": "pɪnˈaːkə", "Varuna": "ʋˈʌɾʊɳə",
     # Demons
     "Tataka": "tˈaːʈəkaː", "Maricha": "maːɾˈiːʧə", "Subahu": "sʊbˈaːhʊ", "Ravana": "ɾˈaːʋəɳə",
     # Mantras and weapons
