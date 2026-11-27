@@ -1,0 +1,17 @@
+name: Update blog pages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["pages/pages.json"]
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create or update About, Contact and Privacy Policy
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: python tools/pages.py

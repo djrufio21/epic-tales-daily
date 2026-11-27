@@ -69,3 +69,8 @@ Copy the field layout from `episodes/001/episode.json`.
 - `.github/workflows/shorts.yml` is a separate job from Blogger publishing: it runs at 12:37 Malaysia time, only reads `published.json`, never commits, and attaches the video plus a ready title and description to a GitHub release named `short-NNN`.
 - Daily uploads to YouTube run only when the `YOUTUBE_REFRESH_TOKEN` secret exists AND the repo variable `YOUTUBE_AUTO` is `true` (set it only after the YouTube API audit passes). Until then the owner uploads from the release. The `test_upload` option uploads one episode as private, for the audit screencast.
 - Shorts are marked not made for kids (family audience) and declare synthetic media.
+
+## Blog pages
+
+- About, Contact and Privacy Policy live in `pages/pages.json`. Editing that file and pushing runs `.github/workflows/pages.yml`, which creates or updates the pages on Blogger.
+- Public contact email: epictalesdaily21@gmail.com. Never put the owner's personal email or name on the blog.
