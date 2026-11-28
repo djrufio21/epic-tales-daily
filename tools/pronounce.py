@@ -29,12 +29,12 @@ IPA = {
     "Sumitra": "sʊmˈɪtɾaː", "Rama": "ɾˈaːmə", "Lakshmana": "lˈʌkʃməɳə", "Bharata": "bʰˈʌɾətə",
     "Shatrughna": "ʃətɾˈʊɡʰnə", "Sita": "sˈiːtaː", "Janaka": "ʤˈʌnəkə", "Urmila": "ˈʊɾmɪlaː",
     "Mandavi": "mˈaːɳɖəʋiː", "Shrutakirti": "ʃɾʊtəkˈiːɾtiː", "Kushadhvaja": "kʊʃədʰʋˈʌʤə",
-    "Yudhajit": "jʊdʰaːʤˈɪt",
+    "Yudhajit": "jʊdʰaːʤˈɪt", "Narayana": "naːɾˈaːjəɳə",
     # Sages and teachers
     "Vasishtha": "ʋəsˈɪʂʈʰə", "Vishvamitra": "ʋɪʃʋaːmˈɪtɾə", "Gautama": "ɡˈɔːtəmə",
     "Ahalya": "əhˈʌljaː", "Shatananda": "ʃətaːnˈʌndə", "Kapila": "kˈʌpɪlə",
     "Valmiki": "ʋaːlmˈiːkiː", "Vyasa": "ʋjˈaːsə", "Parashurama": "pəɾəʃʊɾˈaːmə",
-    "Vamadeva": "ʋaːmədˈeːʋə", "Jamadagni": "ʤəmˈʌdəɡnɪ",
+    "Vamadeva": "ʋaːmədˈeːʋə", "Sumantra": "sʊmˈʌntɾə", "Jamadagni": "ʤəmˈʌdəɡnɪ",
     # Kings of old
     "Sagara": "sˈʌɡəɾə", "Bhagiratha": "bʰəɡˈiːɾətʰə", "Devarata": "deːʋəɾˈaːtə",
     # Gods and divine beings
@@ -50,12 +50,15 @@ IPA = {
     "Kritajnata": "kɾɪtˈʌɡjətaː", "Kartavya": "kˈʌɾtəʋjə", "Shravana": "ʃɾˈʌʋəɳə",
     "Karuna": "kˈʌɾʊɳaː", "Dhairya": "dʰˈɛːɾjə", "Mangala": "mˈʌŋɡələ", "Kutumba": "kʊʈˈʊmbə",
     "Shanti": "ʃˈaːntiː", "Seva": "sˈeːʋaː", "Kshama": "kʃˈʌmaː",
+    "Sadachara": "sədaːʧˈaːɾə",
     # Everyday words
     "Vedas": "ʋˈeːdəz", "guru": "ɡˈʊɾʊ", "gurus": "ɡˈʊɾʊz", "ashram": "ˈaːʃɾəm",
     "astra": "ˈʌstɾə", "astras": "ˈʌstɾəz", "deva": "dˈeːʋə", "devas": "dˈeːʋəz",
     "mantra": "mˈʌntɾə", "mantras": "mˈʌntɾəz", "rakshasa": "ɾˈaːkʃəsə",
     "rakshasas": "ɾˈaːkʃəsəz", "rakshasi": "ɾˈaːkʃəsiː", "rishi": "ɾˈɪʃiː",
     "rishis": "ɾˈɪʃiːz", "brahmana": "bɾˈaːhməɳə", "brahmanas": "bɾˈaːhməɳəz", "tapas": "tˈʌpəs", "yajna": "jˈʌɡjə", "puja": "pˈuːʤaː",
+    "yuvaraja": "jʊʋəɾˈaːʤə", "kusha": "kˈʊʃə", "vrata": "ʋɾˈʌtə", "Maryada": "mˈʌɾjaːdaː",
+    "Purushottama": "pʊɾʊʃˈoːttəmə", "Rajya": "ɾˈaːʤjə", "Navami": "nˈʌʋəmiː",
 }
 # Lower case forms (dharma, seva, shraddha...) say the same as capitalised ones.
 IPA.update({k.lower(): v for k, v in list(IPA.items()) if k.lower() not in IPA})

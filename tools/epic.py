@@ -591,6 +591,44 @@ def bg_ayodhya(sky="url(#sunrise)"):
         fx,fy=r.randint(20,980),r.randint(660,850); g+=f'<circle cx="{fx}" cy="{fy}" r="{r.choice((5,6,7))}" fill="{r.choice(("#e74c3c","#f39c12","#f1c40f","#e84393"))}"/>'
     return g
 
+# ---- Added in Episode 15 ----
+# Sumantra, King Dasharatha's wise old minister and charioteer: slate robe, sky blue drape, grey beard.
+SUMANTRA=dict(robe="#34495e",drape="#85c1e9",trim="#f4d03f",hair="#aab7b8",beard="#aab7b8",beardlen=35)
+def throne(x,y,s=1):
+    """The golden royal throne of Ayodhya with a red cushion. (x,y) is the middle of its base; stand a person in front of it."""
+    g=f'<g transform="translate({x},{y}) scale({s})">'
+    g+='<path d="M-110,-40 L-110,-250 Q0,-340 110,-250 L110,-40 Z" fill="#d4ac0d" stroke="#9a7d0a" stroke-width="5"/>'
+    g+='<path d="M-80,-60 L-80,-235 Q0,-300 80,-235 L80,-60 Z" fill="#c0392b"/><circle cx="0" cy="-262" r="14" fill="#f1c40f" stroke="#9a7d0a" stroke-width="3"/>'
+    g+='<rect x="-140" y="-60" width="280" height="40" rx="10" fill="#922b21"/><rect x="-150" y="-24" width="300" height="24" fill="#b7950b"/>'
+    g+='<rect x="-140" y="0" width="26" height="40" fill="#9a7d0a"/><rect x="114" y="0" width="26" height="40" fill="#9a7d0a"/>'
+    return g+'</g>'
+def diya(x,y,s=1):
+    """A small clay oil lamp with a glowing flame, for rows of festival lights. (x,y) is the middle of its base."""
+    return (f'<g transform="translate({x},{y}) scale({s})"><circle cx="0" cy="-30" r="30" fill="url(#glow)"/>'
+            '<path d="M-22,-12 Q0,6 22,-12 Z" fill="#a04000"/><path d="M-22,-12 Q0,-4 22,-12" stroke="#6e2c00" stroke-width="2" fill="none"/>'
+            '<path d="M0,-12 Q-7,-24 0,-38 Q7,-24 0,-12 Z" fill="#f39c12"/><path d="M0,-14 Q-3,-21 0,-28 Q3,-21 0,-14 Z" fill="#f9e79f"/></g>')
+
+def bg_room_night():
+    """The palace room in the evening: the same room as bg_room, with the moon and stars in the window."""
+    g='<rect width="1000" height="860" fill="#f6d9a8"/>'
+    for px in (40,930): g+=f'<rect x="{px}" y="0" width="30" height="660" fill="#e2b97a"/>'
+    g+='<path d="M380,660 L380,260 Q500,110 620,260 L620,660 Z" fill="url(#night)"/>'+spark(430,330,6,"#fdf2c4")+spark(470,450,5,"#fdf2c4")+spark(590,420,6,"#fdf2c4")
+    g+='<circle cx="555" cy="300" r="30" fill="#fdf2c4"/><circle cx="569" cy="294" r="25" fill="#16234a"/>'
+    g+='<path d="M380,660 L380,260 Q500,110 620,260 L620,660" stroke="#c9812a" stroke-width="14" fill="none"/>'
+    g+='<path d="M0,0 L330,0 Q250,90 120,110 Q60,200 0,230 Z" fill="#8e2f2f"/><path d="M1000,0 L670,0 Q750,90 880,110 Q940,200 1000,230 Z" fill="#8e2f2f"/>'
+    g+='<rect y="660" width="1000" height="200" fill="#a0522d"/><ellipse cx="500" cy="770" rx="440" ry="64" fill="#8e2f2f"/><ellipse cx="500" cy="770" rx="440" ry="64" fill="none" stroke="#f1c40f" stroke-width="5"/>'
+    return g
+
+def thought(x,y,r,fx,fy):
+    """A cream thought cloud centred at (x,y) with radius r, with little bubbles trailing to (fx,fy), the thinker's head. Draw the thought inside it."""
+    g=''
+    lobes=[(math.cos(a)*r*0.78,math.sin(a)*r*0.62) for a in [i*math.pi/4 for i in range(8)]]
+    g+=''.join(f'<circle cx="{x+dx:.0f}" cy="{y+dy:.0f}" r="{r*0.42:.0f}" fill="#fffaf0" stroke="{INK}" stroke-width="3"/>' for dx,dy in lobes)
+    g+=f'<ellipse cx="{x}" cy="{y}" rx="{r*0.95:.0f}" ry="{r*0.78:.0f}" fill="#fffaf0"/>'
+    for k,t in enumerate((0.1,0.28)):
+        g+=f'<circle cx="{fx+(x-fx)*t:.0f}" cy="{fy+(y-fy)*t:.0f}" r="{8+k*6}" fill="#fffaf0" stroke="{INK}" stroke-width="3"/>'
+    return g
+
 # ---- Card layouts. These define the look of the series. ----
 def blogcard(scene):
     """Picture only, for the blog. The caption is real text under the image."""

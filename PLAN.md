@@ -23,7 +23,7 @@ Drawn episodes are marked done. The rest is a plan and can be adjusted.
 
 | No. | Title | Value | Status |
 |---|---|---|---|
-| 15 | The King's Happy Plan | Sadachara (good conduct that wins hearts) | To draw |
+| 15 | The King's Happy Plan | Sadachara (good conduct that wins hearts) | Done |
 | 16 | Manthara's Whisper | Viveka (thinking wisely before you act) | To draw |
 | 17 | Kaikeyi's Two Wishes | Pratijna (keeping a promise, even when it hurts) | To draw |
 | 18 | Rama Accepts the Forest | Samata (staying steady in joy and sorrow) | To draw |
